@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Delete book — Catalogue{% endblock %}
+{% block body_class %}page-app-v2{% endblock %}
+{% block main_class %}main-app-v2{% endblock %}
+
+{% block site_header %}
+  {% include "includes/app_topbar.html" %}
+{% endblock %}
+
+{% block content %}
+<p><a href="{% url 'catalog:book_detail' book.pk %}">&larr; Back</a></p>
+
+<div class="dashboard-card">
+  <h1>Delete “{{ book.title }}”?</h1>
+  <p>This removes the book and all {{ book.total_copies }} registered copy/copies.</p>
+  <form method="post" class="actions-row">
+    {% csrf_token %}
+    <button type="submit" class="btn-primary btn-danger">Yes, delete</button>
+    <a href="{% url 'catalog:book_detail' book.pk %}">Cancel</a>
+  </form>
+</div>
+{% endblock %}
+
+{% block footer %}
+  {% include "includes/app_footer.html" %}
+{% endblock %}

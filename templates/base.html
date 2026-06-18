@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}LAUTECH Library{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/lautech.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  {% block site_header %}
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a href="{% url 'home' %}" class="brand" title="LAUTECH Library home">
+        <span class="brand-mark">LAUTECH</span>
+        <span class="brand-name">Library</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Main navigation">
+        <ul class="nav-list">
+          {% if user.is_authenticated %}
+            <li class="nav-item nav-user">
+              <span class="nav-matric" title="{{ user.get_full_name }}">{{ user.matric_no }}</span>
+            </li>
+            <li class="nav-item"><a href="{% url 'accounts:dashboard' %}">Dashboard</a></li>
+            <li class="nav-item"><a href="{% url 'catalog:book_list' %}">Browse catalogue</a></li>
+            <li class="nav-item"><a href="{% url 'circulation:my_loans' %}">My loans</a></li>
+            {% if not user.biometric_enrolled %}
+              <li class="nav-item nav-highlight">
+                <a href="{% url 'biometrics:enroll' %}">Complete biometric enrolment</a>
+              </li>
+            {% else %}
+              <li class="nav-item"><a href="{% url 'biometrics:verify' %}">Test biometric verification</a></li>
+            {% endif %}
+            {% if user.is_librarian %}
+              <li class="nav-item"><a href="{% url 'circulation:manage_loans' %}">Librarian: loans desk</a></li>
+              <li class="nav-item"><a href="{% url 'catalog:book_create' %}">Librarian: add book</a></li>
+            {% endif %}
+            <li class="nav-item"><a href="{% url 'accounts:profile' %}">My profile</a></li>
+            <li class="nav-item">
+              <form method="post" action="{% url 'accounts:logout' %}" class="nav-logout-form">
+                {% csrf_token %}
+                <button type="submit" class="nav-logout-btn">Sign out</button>
+              </form>
+            </li>
+          {% else %}
+            <li class="nav-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="nav-item"><a href="{% url 'accounts:login' %}">Sign in</a></li>
+            <li class="nav-item nav-cta">
+              <a href="{% url 'accounts:register' %}" class="nav-register-link">Create account</a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+  {% endblock %}
+
+  {% if messages %}
+    <div class="messages-wrap">
+      <ul class="messages">
+        {% for message in messages %}
+          <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <main class="{% block main_class %}main-content{% endblock %}">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block footer %}
+  <footer class="site-footer">
+    <p class="footer-brand">Ladoke Akintola University of Technology, Ogbomoso</p>
+    <p class="footer-meta">Department of Computer Science — Final Year Project</p>
+  </footer>
+  {% endblock %}
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

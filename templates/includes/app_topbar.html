@@ -1,0 +1,33 @@
+{% load static %}
+<header class="app-topbar">
+  <div class="app-topbar-inner">
+    <a href="{% url 'accounts:dashboard' %}" class="brand">
+      <span class="brand-mark">LAUTECH</span>
+      <span class="brand-name">Library</span>
+    </a>
+
+    <nav class="app-topbar-nav" aria-label="Main navigation">
+      <a href="{% url 'accounts:dashboard' %}" class="app-nav-link{% if nav_active == 'dashboard' %} is-active{% endif %}">Dashboard</a>
+      <a href="{% url 'catalog:book_list' %}" class="app-nav-link{% if nav_active == 'catalogue' %} is-active{% endif %}">Catalogue</a>
+      <a href="{% url 'circulation:my_loans' %}" class="app-nav-link{% if nav_active == 'loans' %} is-active{% endif %}">My Loans</a>
+      <a href="{% url 'accounts:profile' %}" class="app-nav-link{% if nav_active == 'profile' %} is-active{% endif %}">Profile</a>
+    </nav>
+
+    <form method="get" action="{% url 'catalog:book_list' %}" class="app-search" role="search">
+      <span class="app-search-icon" aria-hidden="true">🔍</span>
+      <input type="search" name="q" placeholder="Search resources…" class="app-search-input" value="{{ search_query|default:'' }}">
+    </form>
+
+    <div class="app-topbar-user">
+      <div class="app-user-meta">
+        <span class="app-user-matric">{{ user.matric_no }}</span>
+        <span class="app-user-role">{{ user.get_role_display|upper }}</span>
+      </div>
+      <div class="app-user-avatar" aria-hidden="true">{{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}</div>
+      <form method="post" action="{% url 'accounts:logout' %}" class="app-logout-form">
+        {% csrf_token %}
+        <button type="submit" class="app-logout-btn">Sign Out</button>
+      </form>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,7 @@
+Django==5.2.7
+Pillow>=10.0
+numpy>=1.26
+opencv-python-headless>=4.9
+scikit-learn>=1.4
+mediapipe>=0.10.14
+webauthn>=2.0

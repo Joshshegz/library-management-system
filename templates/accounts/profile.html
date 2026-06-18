@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Profile — LAUTECH Library{% endblock %}
+{% block body_class %}page-app-v2{% endblock %}
+{% block main_class %}main-app-v2{% endblock %}
+
+{% block site_header %}
+  {% include "includes/app_topbar.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="profile-layout">
+  <aside class="profile-sidebar">
+    <div class="profile-summary-card">
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar-lg">{{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}</div>
+        <span class="profile-avatar-edit" aria-hidden="true">📷</span>
+      </div>
+      <h1 class="profile-name">{{ user.get_full_name }}</h1>
+      <p class="profile-matric-label">Matric No: {{ user.matric_no }}</p>
+      <ul class="profile-info-list">
+        <li><span aria-hidden="true">🎓</span> {{ user.department|default:"—" }}</li>
+        <li><span aria-hidden="true">✉</span> {{ user.email }}</li>
+      </ul>
+    </div>
+    <div class="profile-2fa-card">
+      <span aria-hidden="true">🛡</span>
+      <span>Two-Factor Auth</span>
+      <span class="profile-2fa-status">Disabled</span>
+    </div>
+  </aside>
+
+  <div class="profile-main">
+    <form method="post" class="profile-form">
+      {% csrf_token %}
+
+      <section class="profile-panel">
+        <h2 class="profile-panel-title">Personal Details</h2>
+        <div class="profile-fields-grid">
+          <div class="form-group">
+            <label for="{{ form.first_name.id_for_label }}">Full Name</label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}<p class="field-error">{% for e in form.first_name.errors %}{{ e }}{% endfor %}</p>{% endif %}
+          </div>
+          <div class="form-group">
+            <label>Matriculation Number</label>
+            <input type="text" class="form-control profile-field" value="{{ user.matric_no }}" readonly disabled>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.email.id_for_label }}">Email Address</label>
+            {{ form.email }}
+            {% if form.email.errors %}<p class="field-error">{% for e in form.email.errors %}{{ e }}{% endfor %}</p>{% endif %}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.department.id_for_label }}">Department</label>
+            {{ form.department }}
+            {% if form.department.errors %}<p class="field-error">{% for e in form.department.errors %}{{ e }}{% endfor %}</p>{% endif %}
+          </div>
+        </div>
+        {{ form.last_name }}
+        {{ form.phone }}
+      </section>
+
+      <section class="profile-panel">
+        <h2 class="profile-panel-title">Security</h2>
+        <p class="profile-security-note">
+          To change your password, use Django admin or contact a librarian. Profile updates save below.
+        </p>
+      </section>
+
+      <div class="profile-actions">
+        <a href="{% url 'accounts:dashboard' %}" class="profile-cancel">Cancel</a>
+        <button type="submit" class="btn-gold">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+  {% include "includes/app_footer.html" %}
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}LAUTECH Library — Modern Knowledge Access{% endblock %}
+{% block body_class %}page-landing-v2{% endblock %}
+{% block main_class %}main-landing-v2{% endblock %}
+
+{% block site_header %}
+  {% include "includes/guest_topbar.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="landing-hero" aria-labelledby="landing-hero-title">
+  <div class="landing-hero-grid">
+    <div class="landing-hero-copy">
+      <h1 id="landing-hero-title" class="landing-hero-title">
+        Modern Knowledge Access for LAUTECH Students
+      </h1>
+      <p class="landing-hero-lead">
+        A biometric-secured digital library ecosystem. Access thousands of academic
+        resources with the security of Windows Hello and advanced facial recognition.
+      </p>
+      <div class="landing-hero-actions">
+        <a href="{% url 'accounts:register' %}" class="btn-gold">
+          Get Started
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="{% url 'accounts:login' %}" class="btn-outline-gold">Sign in to browse</a>
+      </div>
+    </div>
+    <div class="landing-hero-visual">
+      <div class="landing-hero-image-wrap">
+        <img
+          src="{% static 'img/landing-hero-library.png' %}"
+          alt="University library reading room"
+          class="landing-hero-image"
+          width="560"
+          height="380"
+        />
+        <div class="landing-hero-badge">
+          <span class="landing-badge-icon" aria-hidden="true">🛡</span>
+          <div>
+            <strong>Biometric Secured</strong>
+            <span>Windows Hello Ready</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="landing-stats" aria-label="Library statistics">
+  <div class="landing-stats-grid">
+    <article class="landing-stat-card">
+      <span class="landing-stat-icon" aria-hidden="true">📚</span>
+      <p class="landing-stat-value">{{ books_available|default:0 }}</p>
+      <p class="landing-stat-label">Books Available</p>
+    </article>
+    <article class="landing-stat-card">
+      <span class="landing-stat-icon" aria-hidden="true">👥</span>
+      <p class="landing-stat-value">{{ active_members|default:0 }}</p>
+      <p class="landing-stat-label">Active Members</p>
+    </article>
+    <article class="landing-stat-card">
+      <span class="landing-stat-icon" aria-hidden="true">📖</span>
+      <p class="landing-stat-value">{{ loans_today|default:0 }}</p>
+      <p class="landing-stat-label">Loans Today</p>
+    </article>
+  </div>
+</section>
+
+<section class="landing-journey" aria-labelledby="journey-title">
+  <h2 id="journey-title" class="landing-section-title">Seamless Academic Journey</h2>
+  <div class="landing-steps">
+    <article class="landing-step">
+      <div class="landing-step-icon landing-step-icon--filled" aria-hidden="true">👆</div>
+      <h3>Enrol</h3>
+      <p>
+        Register with your matric number and complete biometric enrolment —
+        Windows Hello plus nose capture — to unlock borrowing.
+      </p>
+    </article>
+    <article class="landing-step">
+      <div class="landing-step-icon" aria-hidden="true">🔍</div>
+      <h3>Browse Catalogue</h3>
+      <p>
+        Search the Computer Science library by title, author, or category and
+        check real-time copy availability before you borrow.
+      </p>
+    </article>
+    <article class="landing-step">
+      <div class="landing-step-icon" aria-hidden="true">📦</div>
+      <h3>Borrow &amp; Return</h3>
+      <p>
+        Verify with a live nose match when borrowing or returning. Every transaction
+        is tied to your enrolled identity.
+      </p>
+    </article>
+  </div>
+</section>
+
+<section class="landing-cta-navy" aria-labelledby="landing-cta-title">
+  <div class="landing-cta-navy-inner">
+    <div>
+      <h2 id="landing-cta-title" class="landing-cta-navy-title">Ready to start your research?</h2>
+      <p class="landing-cta-navy-text">
+        Join {{ active_members|default:"our" }} members accessing digital and physical resources securely.
+      </p>
+    </div>
+    <a href="{% url 'accounts:register' %}" class="btn-gold btn-gold--lg">Register Your Account Now</a>
+  </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+<footer class="site-footer site-footer--landing">
+  <div class="landing-footer-inner">
+    <p>
+      Ladoke Akintola University of Technology, Ogbomoso —
+      Department of Computer Science — Final Year Project
+    </p>
+    <nav class="landing-footer-links" aria-label="Footer links">
+      <a href="#">Library Guidelines</a>
+      <a href="#">Contact Librarian</a>
+      <a href="#">Privacy Policy</a>
+    </nav>
+  </div>
+</footer>
+{% endblock %}

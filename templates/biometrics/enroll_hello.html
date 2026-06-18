@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Biometric Enrolment — LAUTECH Library{% endblock %}
+{% block body_class %}page-app-v2{% endblock %}
+{% block main_class %}main-app-v2 main-enrol-v2{% endblock %}
+
+{% block site_header %}
+  {% include "includes/app_topbar.html" %}
+{% endblock %}
+
+{% block content %}
+{% if fully_enrolled %}
+  <div class="enrol-done-banner">
+    <p class="badge badge-ok">Enrolment complete — you can borrow and return books.</p>
+    <a href="{% url 'accounts:dashboard' %}" class="btn-gold">Go to dashboard</a>
+  </div>
+{% elif show_step1 %}
+  <header class="enrol-page-header">
+    <h1 class="enrol-page-title">Biometric Enrolment</h1>
+    <p class="enrol-page-sub">Secure your academic record with multi-layered biometric authentication.</p>
+    <div class="enrol-stepper" aria-label="Enrolment progress">
+      <div class="enrol-stepper-item is-active">
+        <span class="enrol-stepper-num">1</span>
+        <span>Windows Hello</span>
+      </div>
+      <div class="enrol-stepper-line"></div>
+      <div class="enrol-stepper-item">
+        <span class="enrol-stepper-num">2</span>
+        <span>Nose Verification</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="enrol-layout">
+    <section class="enrol-main-card" aria-labelledby="enrol-s1-title">
+      <div class="enrol-main-split">
+        <div class="enrol-split-visual">
+          <div class="enrol-fingerprint-circle" aria-hidden="true">👆</div>
+          <p class="enrol-split-label">Windows Hello</p>
+          <p class="enrol-split-status">System ready for device link</p>
+        </div>
+        <div class="enrol-split-copy">
+          <p class="enrol-protocol"><span aria-hidden="true">🛡</span> SECURITY PROTOCOL 01</p>
+          <h2 id="enrol-s1-title">Device Registration</h2>
+          <p class="enrol-split-desc">
+            Connect Windows Hello (PIN, fingerprint, or facial recognition) to your library account.
+            Use <strong>http://localhost:8000</strong> only.
+          </p>
+          <ul class="enrol-checklist">
+            <li><span aria-hidden="true">✓</span> Industry standard encryption</li>
+            <li><span aria-hidden="true">✓</span> Instant authentication on login</li>
+          </ul>
+          <div id="step-hello-pending">
+            <button
+              type="button"
+              id="btn-windows-hello"
+              class="btn-gold btn-enrol-register"
+              data-mode="register"
+              data-register-options="{% url 'biometrics:webauthn_register_options' %}"
+              data-register-complete="{% url 'biometrics:webauthn_register_complete' %}"
+            >
+              Register Device with Windows Hello <span aria-hidden="true">→</span>
+            </button>
+            <p id="hello-status" class="hello-status"></p>
+          </div>
+          <div id="step-hello-done" style="display:none">
+            <p class="badge badge-ok">Step 1 complete</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="enrol-sidebar">
+      <div class="enrol-next-card">
+        <span aria-hidden="true">🔒</span>
+        <div>
+          <strong>Next Step</strong>
+          <p>Nose Verification — 3D structural analysis</p>
+        </div>
+      </div>
+      <div class="enrol-help-card">
+        <h3>System Help</h3>
+        <p>
+          Update biometric drivers if Windows Hello fails. Visit the Department of Computer Science lab for assistance.
+        </p>
+        <a href="{% url 'biometrics:verify' %}" class="enrol-help-link">View Tutorial ↗</a>
+      </div>
+    </aside>
+  </div>
+
+{% elif show_step2 %}
+  <header class="enrol-page-header">
+    <h1 class="enrol-page-title">Biometric Identity Verification</h1>
+    <p class="enrol-page-sub">Step 2: Securing your academic profile through unique anatomical landmarks.</p>
+    <div class="enrol-stepper enrol-stepper--three" aria-label="Enrolment progress">
+      <div class="enrol-stepper-item is-done"><span class="enrol-stepper-num">✓</span></div>
+      <div class="enrol-stepper-line is-done"></div>
+      <div class="enrol-stepper-item is-active"><span class="enrol-stepper-num">2</span></div>
+      <div class="enrol-stepper-line"></div>
+      <div class="enrol-stepper-item is-locked"><span class="enrol-stepper-num">🔒</span></div>
+    </div>
+    <p class="enrol-stage-label">STAGE: NOSE LANDMARK CAPTURE (STEP 2 OF 2)</p>
+  </header>
+
+  <div class="enrol-nose-layout">
+    <section class="enrol-nose-capture-card">
+      <form method="post" action="{% url 'biometrics:enroll_nose' %}" enctype="multipart/form-data" id="biometric-form">
+        {% csrf_token %}
+        {% include "biometrics/includes/nose_capture_v2.html" %}
+        <button type="submit" class="btn-enrol-save" id="btn-save-enrol" disabled>
+          💾 Save Enrolment
+        </button>
+      </form>
+    </section>
+
+    <aside class="enrol-nose-sidebar">
+      <div class="enrol-context-card">
+        <h3>Academic Security Context</h3>
+        <p>
+          Nose landmark verification creates a depth map for secure access when borrowing and returning
+          physical library materials.
+        </p>
+        <div class="enrol-info-banner">
+          <span aria-hidden="true">ℹ</span>
+          Landmark vectors are stored on LAUTECH servers — not raw photos.
+        </div>
+      </div>
+      <div class="enrol-ready-card">
+        <span class="enrol-ready-icon" aria-hidden="true">⋯</span>
+        <div>
+          <strong>Verification Ready</strong>
+          <p>Capture your nose, then save enrolment.</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+{% endif %}
+{% endblock %}
+
+{% block footer %}
+  {% include "includes/app_footer.html" %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/webauthn_hello.js' %}"></script>
+<script src="{% static 'js/biometric_capture.js' %}?v=7"></script>
+<script>
+  (function () {
+    const livenessInput = document.getElementById("nose_liveness_frames");
+    const saveBtn = document.getElementById("btn-save-enrol");
+    if (saveBtn) {
+      const check = () => {
+        saveBtn.disabled = !(livenessInput && livenessInput.value.length > 10);
+      };
+      document.addEventListener("liveness:complete", check);
+      check();
+    }
+    if (window.location.hash === "#step-nose" && {{ hello_done|yesno:"true,false" }}) {
+      window.unlockEnrollStep2?.();
+    }
+  })();
+</script>
+{% endblock %}

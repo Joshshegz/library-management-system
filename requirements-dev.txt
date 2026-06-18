@@ -1,0 +1,2 @@
+# Optional: regenerate docs/django-roadmap-1-hour-per-day.pdf
+fpdf2>=2.7

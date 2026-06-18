@@ -1,0 +1,39 @@
+<div class="nose-capture-v2" data-liveness-auto="true" data-liveness-pace="manual" data-mirror-camera="true">
+  <div class="nose-capture-v2-head">
+    <span class="nose-capture-v2-title">👤 Verify with Nose</span>
+    <span class="nose-live-badge"><span class="nose-live-dot"></span> LIVE FEED</span>
+  </div>
+  <div class="nose-video-frame">
+    <video id="nose-video" autoplay playsinline muted class="nose-video-el"></video>
+    <div class="nose-overlay" aria-hidden="true">
+      <span class="nose-overlay-ring"></span>
+      <span class="nose-overlay-dot"></span>
+    </div>
+    <div class="liveness-prompt-overlay" id="liveness-prompt" aria-live="assertive">
+      <p class="liveness-prompt-text" id="liveness-prompt-text">Starting camera…</p>
+      <p class="liveness-countdown" id="liveness-countdown"></p>
+    </div>
+  </div>
+  <canvas id="nose-canvas" class="nose-canvas-hidden"></canvas>
+  <input type="hidden" name="nose_image" id="nose_image">
+  <input type="hidden" name="nose_liveness_frames" id="nose_liveness_frames" value="">
+
+  <p class="nose-capture-hint" id="liveness-hint">
+    Use the button below each step when you are ready — you control the pace.
+  </p>
+
+  <button type="button" id="liveness-next-btn" class="btn-gold btn-gold--full liveness-next-btn" hidden>
+    Continue
+  </button>
+  <p class="liveness-status" id="liveness-status" role="status"></p>
+  <div class="liveness-progress" id="liveness-progress">
+    <span class="liveness-step" data-step="1" title="Look at camera">1</span>
+    <span class="liveness-step" data-step="2" title="Open mouth">2</span>
+    <span class="liveness-step" data-step="3" title="Final pose">3</span>
+  </div>
+
+  <button type="button" id="capture-nose" class="btn-gold btn-gold--full nose-capture-btn" hidden>
+    ↻ Repeat liveness check
+  </button>
+  <img id="nose-preview" alt="" class="nose-preview-img">
+</div>

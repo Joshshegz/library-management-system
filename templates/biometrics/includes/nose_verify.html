@@ -1,0 +1,15 @@
+<div class="nose-verify-block" style="margin:1.25rem 0;padding:1rem;border:1px solid var(--lautech-border);border-radius:var(--lautech-radius);background:var(--lautech-surface)">
+  <h3 style="margin:0 0 0.5rem;font-size:1rem;color:var(--lautech-gold-hover)">Verify with nose</h3>
+  <p style="font-size:0.85rem;color:var(--lautech-muted);margin:0 0 0.75rem">
+    Face the webcam and capture your nose before continuing.
+  </p>
+  <input type="hidden" name="nose_image" id="nose_image">
+
+  <video id="nose-video" autoplay playsinline muted style="width:100%;max-width:360px;border-radius:8px;background:#000"></video>
+  <canvas id="nose-canvas" style="display:none"></canvas>
+  <img id="nose-preview" alt="" style="display:none;max-width:160px;margin-top:0.5rem;border-radius:8px">
+
+  <p style="margin-top:0.5rem">
+    <button type="button" id="capture-nose" class="btn-primary btn-inline">Capture nose</button>
+  </p>
+</div>

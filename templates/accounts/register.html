@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account — LAUTECH Library{% endblock %}
+{% block body_class %}page-register-v2{% endblock %}
+{% block main_class %}main-register-v2{% endblock %}
+
+{% block site_header %}
+  {% include "includes/guest_topbar.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="register-layout">
+  <section class="register-promo" aria-labelledby="register-promo-title">
+    <h1 id="register-promo-title" class="register-promo-title">
+      Join the Digital Academic Commons.
+    </h1>
+    <p class="register-promo-lead">
+      Access thousands of journals, digital archives, and physical resources with your
+      LAUTECH student identity. Manage your loans and research from anywhere.
+    </p>
+    <ul class="register-features">
+      <li>
+        <span class="register-feature-icon" aria-hidden="true">🎓</span>
+        <div>
+          <strong>University Verified</strong>
+          <span>Syncs directly with the university student portal.</span>
+        </div>
+      </li>
+      <li>
+        <span class="register-feature-icon" aria-hidden="true">📖</span>
+        <div>
+          <strong>Reservation System</strong>
+          <span>Hold books before you even arrive at the campus library.</span>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <section class="register-card-wrap" aria-labelledby="register-form-title">
+    <div class="register-card">
+      <h2 id="register-form-title" class="register-card-title">Create Account</h2>
+      <p class="register-card-sub">Enter your university credentials to begin.</p>
+
+      <form method="post" novalidate class="register-form">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="register-alert">{% for e in form.non_field_errors %}{{ e }}{% endfor %}</div>
+        {% endif %}
+
+        <div class="form-group">
+          <label for="{{ form.matric_no.id_for_label }}">Matric Number</label>
+          <div class="reg-input-icon-wrap">
+            {{ form.matric_no }}
+            <span class="reg-field-icon" aria-hidden="true">🪪</span>
+          </div>
+          {% if form.matric_no.errors %}<p class="field-error">{% for e in form.matric_no.errors %}{{ e }}{% endfor %}</p>{% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.first_name.id_for_label }}">Full Name</label>
+          {{ form.first_name }}
+          {{ form.last_name }}
+          {% if form.first_name.errors %}<p class="field-error">{% for e in form.first_name.errors %}{{ e }}{% endfor %}</p>{% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.email.id_for_label }}">Email Address</label>
+          {{ form.email }}
+          {% if form.email.errors %}<p class="field-error">{% for e in form.email.errors %}{{ e }}{% endfor %}</p>{% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.department.id_for_label }}">Department</label>
+          {{ form.department }}
+          {% if form.department.errors %}<p class="field-error">{% for e in form.department.errors %}{{ e }}{% endfor %}</p>{% endif %}
+        </div>
+
+        <div class="register-password-row">
+          <div class="form-group">
+            <label for="{{ form.password1.id_for_label }}">Password</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}<p class="field-error">{% for e in form.password1.errors %}{{ e }}{% endfor %}</p>{% endif %}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}<p class="field-error">{% for e in form.password2.errors %}{{ e }}{% endfor %}</p>{% endif %}
+          </div>
+        </div>
+
+        <button type="submit" class="btn-gold btn-gold--full">Create Account</button>
+      </form>
+
+      <p class="register-signin">
+        Already have an account? <a href="{% url 'accounts:login' %}">Sign In</a>
+      </p>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="site-footer site-footer--landing">
+  <div class="landing-footer-inner">
+    <p>
+      Ladoke Akintola University of Technology, Ogbomoso —
+      Department of Computer Science — Final Year Project
+    </p>
+    <nav class="landing-footer-links" aria-label="Footer links">
+      <a href="#">Library Guidelines</a>
+      <a href="#">Contact Librarian</a>
+      <a href="#">Privacy Policy</a>
+    </nav>
+  </div>
+</footer>
+{% endblock %}

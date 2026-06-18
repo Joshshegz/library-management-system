@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Verify biometrics{% endblock %}
+
+{% block content %}
+<div class="auth-card" style="max-width:560px;margin:0 auto">
+  <h1>Test verification</h1>
+  <p class="subtitle">Logged in as {{ user.matric_no }} — re-check your templates</p>
+
+  <form method="post" enctype="multipart/form-data" id="biometric-form">
+    {% csrf_token %}
+    <input type="hidden" name="nose_image" id="nose_image">
+
+    <video id="nose-video" autoplay playsinline muted style="width:100%;border-radius:8px;background:#000"></video>
+    <canvas id="nose-canvas" style="display:none"></canvas>
+    <p><button type="button" id="capture-nose" class="btn-primary btn-inline">Capture nose</button></p>
+
+    <div class="form-group">
+      <label>Thumb image</label>
+      <input type="file" name="thumb_file" accept="image/*" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn-primary">Run verification</button>
+  </form>
+</div>
+<script src="{% static 'js/biometric_capture.js' %}"></script>
+{% endblock %}

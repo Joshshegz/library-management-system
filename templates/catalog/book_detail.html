@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}{{ book.title }} — Catalogue{% endblock %}
+{% block body_class %}page-app-v2{% endblock %}
+{% block main_class %}main-app-v2{% endblock %}
+
+{% block site_header %}
+  {% include "includes/app_topbar.html" %}
+{% endblock %}
+
+{% block content %}
+<p><a href="{% url 'catalog:book_list' %}">&larr; Back to catalogue</a></p>
+
+<div class="dashboard-card">
+  <h1>{{ book.title }}</h1>
+  <p><strong>Author:</strong> {{ book.author }}</p>
+  {% if book.isbn %}<p><strong>ISBN:</strong> {{ book.isbn }}</p>{% endif %}
+  {% if book.category %}<p><strong>Category:</strong> {{ book.category }}</p>{% endif %}
+  {% if book.publisher %}<p><strong>Publisher:</strong> {{ book.publisher }}{% if book.publication_year %} ({{ book.publication_year }}){% endif %}</p>{% endif %}
+  {% if book.description %}<p>{{ book.description }}</p>{% endif %}
+  <p>
+    <strong>Availability:</strong>
+    {{ book.available_copies }} of {{ book.total_copies }} copy/copies available
+  </p>
+  {% if book.available_copies and user.is_authenticated %}
+    <p style="margin-top:0.75rem">
+      {% if user.biometric_enrolled %}
+        <a href="{% url 'circulation:borrow_book' book.pk %}" class="btn-primary btn-inline">Borrow this book</a>
+      {% else %}
+        <a href="{% url 'biometrics:enroll' %}" class="btn-primary btn-inline">Set up Windows Hello to borrow</a>
+      {% endif %}
+    </p>
+  {% endif %}
+
+  {% if user.is_librarian %}
+    <p class="actions-row">
+      <a href="{% url 'catalog:book_edit' book.pk %}">Edit book</a>
+      &nbsp;|&nbsp;
+      <a href="{% url 'catalog:book_delete' book.pk %}">Delete book</a>
+    </p>
+  {% endif %}
+</div>
+
+<h2>Copies</h2>
+{% if book.copies.all %}
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Copy ID</th>
+        <th>Shelf</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for copy in book.copies.all %}
+        <tr>
+          <td>{{ copy.copy_code }}</td>
+          <td>{{ copy.shelf_location|default:"—" }}</td>
+          <td>
+            {% if copy.status == "available" %}
+              <span class="badge badge-ok">{{ copy.get_status_display }}</span>
+            {% else %}
+              <span class="badge badge-warn">{{ copy.get_status_display }}</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="empty-state">No copies registered for this title yet.</p>
+{% endif %}
+
+{% if user.is_librarian and copy_form %}
+  <h2>Add copy</h2>
+  <form method="post" class="add-copy-form">
+    {% csrf_token %}
+    {% for field in copy_form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn-primary btn-inline">Add copy</button>
+  </form>
+{% endif %}
+{% endblock %}
+
+{% block footer %}
+  {% include "includes/app_footer.html" %}
+{% endblock %}

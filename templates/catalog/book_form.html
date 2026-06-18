@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} — Catalogue{% endblock %}
+{% block body_class %}page-app-v2{% endblock %}
+{% block main_class %}main-app-v2{% endblock %}
+
+{% block site_header %}
+  {% include "includes/app_topbar.html" %}
+{% endblock %}
+
+{% block content %}
+<p><a href="{% url 'catalog:book_list' %}">&larr; Back to catalogue</a></p>
+
+<div class="auth-card" style="max-width:560px;margin-left:0">
+  <h1>{{ title }}</h1>
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn-primary">Save</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block footer %}
+  {% include "includes/app_footer.html" %}
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Return — {{ loan.book.title }}{% endblock %}
+{% block body_class %}page-app-v2{% endblock %}
+{% block main_class %}main-app-v2{% endblock %}
+
+{% block site_header %}
+  {% include "includes/app_topbar.html" %}
+{% endblock %}
+
+{% block content %}
+<p class="circ-back-link">
+  <a href="{% url 'circulation:my_loans' %}">← Return to My Loans</a>
+</p>
+
+<h1 class="circ-page-title">Book Details</h1>
+
+<div class="circ-return-layout">
+  <aside class="circ-book-panel">
+    <div class="circ-book-card">
+      <div class="circ-book-cover" aria-hidden="true">📕</div>
+      <div class="circ-book-meta">
+        <span class="circ-book-cat">{{ loan.book.category|default:"Computing & Engineering"|upper }}</span>
+        <h2>{{ loan.book.title }}</h2>
+        <p class="circ-book-author">{{ loan.book.author }}</p>
+        <dl class="circ-book-dl">
+          <dt>Copy ID</dt><dd>{{ loan.book_copy.copy_code }}</dd>
+          <dt>Borrowed</dt><dd>{{ loan.borrowed_at|date:"M j, Y" }}</dd>
+          <dt>Due</dt>
+          <dd>
+            {{ loan.due_at|date:"M j, Y" }}
+            {% if loan.is_overdue %}
+              <span class="circ-due-warn">⏱ Return overdue</span>
+            {% elif loan.due_at.date == today %}
+              <span class="circ-due-warn">⏱ Return due today</span>
+            {% endif %}
+          </dd>
+        </dl>
+      </div>
+    </div>
+    <div class="circ-policy-note">
+      <strong>Return policy reminder</strong>
+      <p>Confirm return with nose verification so your academic borrowing record stays accurate.</p>
+    </div>
+  </aside>
+
+  <section class="circ-verify-panel">
+    <h2 class="circ-verify-title">Verify Nose to Return</h2>
+    <p class="circ-verify-sub">
+      Position your face within the frame. Our system uses nasal bridge point mapping for secure student identification.
+    </p>
+
+    <form method="post" enctype="multipart/form-data" id="biometric-form" class="circ-verify-form">
+      {% csrf_token %}
+      {% if request.GET.next == "manage" %}
+        <input type="hidden" name="next" value="manage">
+      {% endif %}
+
+      <div class="circ-verify-frame">
+        {% include "biometrics/includes/nose_capture_v2.html" %}
+      </div>
+
+      <button type="submit" class="btn-gold btn-gold--full circ-submit-btn">
+        🧑 Verify Nose &amp; Confirm Return
+      </button>
+      <p class="circ-cancel-wrap">
+        <a href="{% url 'circulation:my_loans' %}">Cancel and Return Later</a>
+      </p>
+
+      <div class="circ-stepper" aria-label="Return progress">
+        <div class="circ-step is-done"><span>1</span> Scan Book</div>
+        <div class="circ-step is-active"><span>2</span> Verification</div>
+        <div class="circ-step"><span>3</span> Receipt</div>
+      </div>
+    </form>
+  </section>
+</div>
+{% endblock %}
+
+{% block footer %}
+  {% include "includes/app_footer.html" %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/biometric_capture.js' %}?v=7"></script>
+{% endblock %}

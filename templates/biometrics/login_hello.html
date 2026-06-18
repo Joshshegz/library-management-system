@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Biometric Authentication — LAUTECH Library{% endblock %}
+{% block body_class %}page-hello-v2{% endblock %}
+{% block main_class %}main-hello-v2{% endblock %}
+
+{% block site_header %}
+  {% include "includes/guest_topbar.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="hello-auth-page">
+  <div class="hello-auth-card">
+    <div class="hello-auth-icon" aria-hidden="true">👆</div>
+    <h1 class="hello-auth-title">Biometric Authentication</h1>
+    <p class="hello-auth-sub">
+      Use your device's built-in security to sign in faster.
+    </p>
+
+    <div class="form-group">
+      <label for="matric_no">Matric Number</label>
+      <input
+        type="text"
+        id="matric_no"
+        class="form-control hello-field"
+        placeholder="e.g. 2021000382"
+        required
+        autocomplete="username"
+      >
+    </div>
+
+    <button
+      type="button"
+      id="btn-windows-hello"
+      class="btn-hello-primary"
+      data-mode="login"
+      data-auth-options="{% url 'biometrics:webauthn_auth_options' %}"
+      data-auth-complete="{% url 'biometrics:webauthn_auth_complete' %}"
+    >
+      <span class="btn-hello-shield" aria-hidden="true">🛡</span>
+      Sign in with Windows Hello
+    </button>
+
+    <p id="hello-status" class="hello-status" role="status"></p>
+
+    <div class="hello-divider" role="separator"><span>OR</span></div>
+
+    <a href="{% url 'accounts:login' %}" class="hello-password-link">
+      Sign in with password instead
+    </a>
+  </div>
+
+  <div class="hello-security-note">
+    <p class="hello-lock-line">
+      <span aria-hidden="true">🔒</span> Secure End-to-End Encryption
+    </p>
+    <p class="hello-disclaimer">
+      Your biometric data is stored locally on your device and never sent to our servers.
+    </p>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="site-footer site-footer--landing">
+  <div class="landing-footer-inner">
+    <p>
+      Ladoke Akintola University of Technology, Ogbomoso —
+      Department of Computer Science — Final Year Project
+    </p>
+    <nav class="landing-footer-links" aria-label="Footer links">
+      <a href="#">Library Guidelines</a>
+      <a href="#">Contact Librarian</a>
+      <a href="#">Privacy Policy</a>
+    </nav>
+  </div>
+</footer>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/webauthn_hello.js' %}"></script>
+{% endblock %}

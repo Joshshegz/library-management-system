@@ -1,0 +1,13 @@
+<header class="site-header landing-topbar">
+  <div class="site-header-inner">
+    <a href="{% url 'home' %}" class="brand brand--landing">
+      <span class="brand-mark">LAUTECH</span>
+      <span class="brand-name">Library</span>
+    </a>
+    <nav class="landing-topbar-nav" aria-label="Main navigation">
+      <a href="{% url 'home' %}">Home</a>
+      <a href="{% url 'accounts:login' %}">Sign In</a>
+    </nav>
+    <a href="{% url 'accounts:register' %}" class="btn-gold btn-gold--nav">Create Account</a>
+  </div>
+</header>

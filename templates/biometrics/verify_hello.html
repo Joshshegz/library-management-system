@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Biometric Verification — LAUTECH Library{% endblock %}
+{% block body_class %}page-app-v2{% endblock %}
+{% block main_class %}main-app-v2{% endblock %}
+
+{% block site_header %}
+  {% include "includes/app_topbar.html" %}
+{% endblock %}
+
+{% block content %}
+<header class="verify-page-header">
+  <h1 class="verify-page-title">Biometric Identity Verification</h1>
+  <p class="verify-page-sub">
+    Calibrate and test your facial biometric markers against our secure records.
+    Use a well-lit environment for optimal accuracy.
+  </p>
+</header>
+
+{% if not nose_done %}
+  <div class="verify-alert">
+    <p>Complete nose enrolment first.</p>
+    <a href="{% url 'biometrics:enroll' %}" class="btn-gold btn-inline">Continue enrolment</a>
+  </div>
+{% else %}
+  <div class="verify-layout">
+    <section class="verify-webcam-card">
+      <div class="verify-webcam-head">
+        <span><span class="nose-live-dot"></span> LIVE WEBCAM PREVIEW</span>
+        <span class="verify-webcam-id">ID: {{ verify_id }}</span>
+      </div>
+      <form method="post" enctype="multipart/form-data" id="biometric-form" class="verify-form">
+        {% csrf_token %}
+        <p class="verify-webcam-id-inline">Session ID: {{ verify_id }}</p>
+        {% include "biometrics/includes/nose_capture_v2.html" %}
+        <button type="submit" class="btn-gold btn-gold--full verify-test-btn">
+          🧑 TEST NOSE VERIFICATION
+        </button>
+      </form>
+      <p class="verify-alt-link">SWITCH TO RETINA SCAN</p>
+      {% if verify_result %}
+        <p class="verify-result verify-result--{% if verify_result.ok %}ok{% else %}fail{% endif %}">
+          {{ verify_result.message }}
+        </p>
+      {% endif %}
+    </section>
+
+    <aside class="verify-sidebar">
+      <div class="verify-side-card">
+        <span class="verify-await-icon" aria-hidden="true">⋯</span>
+        <h3>Awaiting Scan Input</h3>
+        <p>Align your face with the central marker, capture your nose, then run the test.</p>
+      </div>
+      <div class="verify-side-card">
+        <h3 class="verify-guidelines-title">VERIFICATION GUIDELINES</h3>
+        <ul class="verify-guidelines">
+          <li><span aria-hidden="true">◎</span> Centre your face — fill at least 40% of the frame.</li>
+          <li><span aria-hidden="true">☀</span> Avoid backlight; use frontal lighting.</li>
+          <li><span aria-hidden="true">😐</span> Keep a neutral expression for consistent landmarks.</li>
+        </ul>
+      </div>
+      <div class="verify-side-card">
+        <div class="verify-attempts-head">
+          <h3>RECENT ATTEMPTS</h3>
+          <a href="#">View History</a>
+        </div>
+        {% if verify_result %}
+          <div class="verify-attempt-row">
+            <span>Just now</span>
+            <span class="verify-badge verify-badge--{% if verify_result.ok %}pass{% else %}fail{% endif %}">
+              {% if verify_result.ok %}PASSED{% else %}FAILED{% endif %}
+            </span>
+          </div>
+        {% endif %}
+        <div class="verify-attempt-row verify-attempt-row--muted">
+          <span>Previous session</span>
+          <span class="verify-badge verify-badge--pass">PASSED</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+{% endif %}
+{% endblock %}
+
+{% block footer %}
+  {% include "includes/app_footer.html" %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/biometric_capture.js' %}?v=7"></script>
+{% endblock %}

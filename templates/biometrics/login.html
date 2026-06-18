@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Biometric login{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+  <h1>Biometric login</h1>
+  <p class="subtitle">Matric ID + live nose capture + thumb image</p>
+
+  <form method="post" enctype="multipart/form-data" id="biometric-form">
+    {% csrf_token %}
+    <input type="hidden" name="nose_image" id="nose_image">
+
+    <div class="form-group">
+      <label for="matric_no">Staff/Student ID</label>
+      <input type="text" name="matric_no" id="matric_no" class="form-control"
+             value="{{ matric_no|default:'' }}" placeholder="e.g. 2021000382" required>
+    </div>
+
+    <h2>Nose capture</h2>
+    <video id="nose-video" autoplay playsinline muted style="width:100%;border-radius:8px;background:#000"></video>
+    <canvas id="nose-canvas" style="display:none"></canvas>
+    <img id="nose-preview" alt="" style="display:none;max-width:160px;margin-top:0.5rem">
+    <p><button type="button" id="capture-nose" class="btn-primary btn-inline">Capture nose</button></p>
+
+    <h2>Thumbprint</h2>
+    <input type="file" name="thumb_file" accept="image/*" class="form-control" required>
+
+    <button type="submit" class="btn-primary">Verify &amp; login</button>
+  </form>
+
+  <p class="auth-links">
+    <a href="{% url 'accounts:login' %}">Password login</a>
+    &nbsp;·&nbsp;
+    <a href="{% url 'accounts:register' %}">Register</a>
+  </p>
+</div>
+<script src="{% static 'js/biometric_capture.js' %}"></script>
+{% endblock %}

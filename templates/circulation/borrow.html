@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Borrow — {{ book.title }}{% endblock %}
+{% block body_class %}page-app-v2{% endblock %}
+{% block main_class %}main-app-v2{% endblock %}
+
+{% block site_header %}
+  {% include "includes/app_topbar.html" %}
+{% endblock %}
+
+{% block content %}
+<p class="circ-back-link">
+  <a href="{% url 'catalog:book_detail' book.pk %}">← Back to book</a>
+</p>
+
+<h1 class="circ-page-title">Borrow Book</h1>
+
+<div class="circ-return-layout">
+  <aside class="circ-book-panel">
+    <div class="circ-book-card">
+      <div class="circ-book-cover" aria-hidden="true">📕</div>
+      <div class="circ-book-meta">
+        <span class="circ-book-cat">{{ book.category|default:"General"|upper }}</span>
+        <h2>{{ book.title }}</h2>
+        <p class="circ-book-author">{{ book.author }}</p>
+        <p class="circ-book-dl">Loan period: <strong>14 days</strong></p>
+      </div>
+    </div>
+    <div class="circ-policy-note">
+      <strong>Before you borrow</strong>
+      <p>Complete nose verification to confirm your identity at checkout.</p>
+    </div>
+  </aside>
+
+  <section class="circ-verify-panel">
+    <h2 class="circ-verify-title">Verify Nose to Borrow</h2>
+    <p class="circ-verify-sub">
+      Select a copy, capture your nose, and confirm checkout.
+    </p>
+
+    <form method="post" enctype="multipart/form-data" id="biometric-form" class="circ-verify-form">
+      {% csrf_token %}
+      <div class="form-group circ-copy-select">
+        <label for="{{ form.copy.id_for_label }}">{{ form.copy.label }}</label>
+        {{ form.copy }}
+        {% if form.copy.errors %}<p class="field-error">{% for e in form.copy.errors %}{{ e }}{% endfor %}</p>{% endif %}
+      </div>
+
+      <div class="circ-verify-frame">
+        {% include "biometrics/includes/nose_capture_v2.html" %}
+      </div>
+
+      <button type="submit" class="btn-gold btn-gold--full circ-submit-btn">
+        🧑 Verify Nose &amp; Confirm Borrow
+      </button>
+      <p class="circ-cancel-wrap">
+        <a href="{% url 'catalog:book_detail' book.pk %}">Cancel</a>
+      </p>
+    </form>
+  </section>
+</div>
+{% endblock %}
+
+{% block footer %}
+  {% include "includes/app_footer.html" %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/biometric_capture.js' %}?v=7"></script>
+{% endblock %}

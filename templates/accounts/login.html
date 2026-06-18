@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sign in — LAUTECH Library{% endblock %}
+{% block body_class %}page-login-v2{% endblock %}
+{% block main_class %}main-login-v2{% endblock %}
+
+{% block site_header %}{% endblock %}
+
+{% block content %}
+<div class="login-page">
+  <header class="login-brand">
+    <span class="login-brand-icon" aria-hidden="true">🏛</span>
+    <span class="login-brand-text">LAUTECH Library</span>
+  </header>
+
+  <h1 class="login-university-name">Ladoke Akintola</h1>
+  <p class="login-university-sub">University of Technology</p>
+
+  <div class="login-card">
+    <h2 class="login-card-title">Sign in to Portal</h2>
+    <p class="login-card-sub">Ogbomoso — Library portal</p>
+
+    <form method="post" novalidate class="login-form">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="login-alert" role="alert">
+          {% for e in form.non_field_errors %}{{ e }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="form-group login-field-group{% if form.username.errors %} has-error{% endif %}">
+        <label for="{{ form.username.id_for_label }}">Matric Number</label>
+        <div class="login-input-wrap">
+          {{ form.username }}
+          {% if form.username.errors %}
+            <span class="login-field-error-icon" aria-hidden="true">!</span>
+          {% endif %}
+        </div>
+        {% if form.username.errors %}
+          <p class="login-field-error">{% for e in form.username.errors %}{{ e }}{% endfor %}</p>
+        {% endif %}
+      </div>
+
+      <div class="form-group login-field-group{% if form.password.errors %} has-error{% endif %}">
+        <div class="login-label-row">
+          <label for="{{ form.password.id_for_label }}">Password</label>
+          <a href="#" class="login-forgot">Forgot?</a>
+        </div>
+        <div class="login-input-wrap">
+          {{ form.password }}
+          <button type="button" class="login-toggle-pw" aria-label="Show password" data-target="id_password">
+            <span aria-hidden="true">👁</span>
+          </button>
+        </div>
+        {% if form.password.errors %}
+          <p class="login-field-error">{% for e in form.password.errors %}{{ e }}{% endfor %}</p>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn-login-submit">
+        Sign In
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </button>
+    </form>
+
+    <div class="login-divider" role="separator"></div>
+
+    <a href="{% url 'biometrics:login' %}" class="login-hello-link">
+      <span class="login-hello-icon" aria-hidden="true">👆</span>
+      Sign in with Windows Hello
+    </a>
+
+    <p class="login-register">
+      New student? <a href="{% url 'accounts:register' %}">Create account</a>
+    </p>
+  </div>
+
+  <div class="login-visual">
+    <img
+      src="{% static 'img/login-bookshelves.png' %}"
+      alt=""
+      class="login-visual-img"
+      width="720"
+      height="200"
+    />
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="site-footer site-footer--login">
+  <div class="login-footer-inner">
+    <p>
+      Ladoke Akintola University of Technology, Ogbomoso —
+      Department of Computer Science — Final Year Project
+    </p>
+    <nav class="login-footer-links" aria-label="Footer links">
+      <a href="#">Library Guidelines</a>
+      <a href="#">Privacy Policy</a>
+    </nav>
+  </div>
+</footer>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/login.js' %}"></script>
+{% endblock %}
