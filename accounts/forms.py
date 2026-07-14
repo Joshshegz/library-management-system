@@ -13,6 +13,9 @@ class MatricAuthenticationForm(AuthenticationForm):
                 "placeholder": "e.g. 2021000382",
                 "autocomplete": "username",
                 "class": "form-control login-field",
+                "pattern": "[0-9]+",
+                "inputmode": "numeric",
+                "title": "Please enter a valid numeric matric number.",
             }
         ),
     )
@@ -29,7 +32,10 @@ class MatricAuthenticationForm(AuthenticationForm):
     )
 
     def clean_username(self):
-        return self.cleaned_data["username"].strip().upper()
+        val = self.cleaned_data["username"].strip()
+        if not val.isdigit():
+            raise forms.ValidationError("Matric number must contain only numbers.")
+        return val
 
 
 DEPARTMENT_CHOICES = [
@@ -50,6 +56,9 @@ class UserRegistrationForm(UserCreationForm):
             attrs={
                 "placeholder": "e.g. 2021000382",
                 "class": "form-control reg-field",
+                "pattern": "[0-9]+",
+                "inputmode": "numeric",
+                "title": "Please enter a valid numeric matric number.",
             }
         ),
     )
@@ -117,7 +126,10 @@ class UserRegistrationForm(UserCreationForm):
         )
 
     def clean_matric_no(self):
-        return self.cleaned_data["matric_no"].strip().upper()
+        val = self.cleaned_data["matric_no"].strip()
+        if not val.isdigit():
+            raise forms.ValidationError("Matric number must contain only numbers.")
+        return val
 
 
 class UserProfileForm(forms.ModelForm):

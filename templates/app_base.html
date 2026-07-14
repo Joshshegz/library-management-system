@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block site_header %}{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=1.4">
+{% endblock %}
+{% block footer %}{% endblock %}
+{% block main_class %}app-main-container{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+  <aside class="app-sidebar">
+    <div class="sidebar-header">
+      <a href="{% url 'accounts:dashboard' %}" class="brand-sidebar">
+        <img src="{% static 'img/lautech-logo.png' %}" alt="Logo" class="sidebar-logo" onerror="this.style.display='none'">
+        <div class="brand-text">
+          <span class="brand-mark-sidebar">LADOKE AKINTOLA</span>
+          <span class="brand-name-sidebar">UNIVERSITY OF TECHNOLOGY</span>
+        </div>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="{% url 'accounts:dashboard' %}" class="sidebar-link {% if nav_active == 'dashboard' %}active{% endif %}">
+        <span class="icon">📊</span> Dashboard
+      </a>
+      <a href="{% url 'catalog:book_list' %}" class="sidebar-link {% if nav_active == 'catalogue' %}active{% endif %}">
+        <span class="icon">📖</span> Books
+      </a>
+      {% if not user.is_librarian %}
+      <a href="{% url 'circulation:my_loans' %}" class="sidebar-link {% if nav_active == 'loans' %}active{% endif %}">
+        <span class="icon">📚</span> Borrowed Books
+      </a>
+      {% endif %}
+      {% if user.is_librarian %}
+      <a href="{% url 'circulation:manage_loans' %}" class="sidebar-link {% if nav_active == 'students' %}active{% endif %}">
+        <span class="icon">🎓</span> Students
+      </a>
+      {% endif %}
+    </nav>
+  </aside>
+
+  <div class="app-content-area">
+    <header class="app-topbar-modern">
+      <div class="topbar-left">
+        <span class="topbar-brand">Lib+</span>
+      </div>
+      <div class="topbar-right">
+        <button class="btn-topbar btn-fade"><span class="icon">↑</span> Upload</button>
+        <a href="{% url 'accounts:profile' %}" class="btn-topbar btn-outline"><span class="icon">💬</span> Past Conversations</a>
+        <form method="post" action="{% url 'accounts:logout' %}" style="display:inline; margin-left: 10px;">
+          {% csrf_token %}
+          <button type="submit" class="btn-topbar">Logout</button>
+        </form>
+      </div>
+    </header>
+
+    <div class="app-main-content">
+      {% block app_content %}{% endblock %}
+    </div>
+  </div>
+</div>
+{% endblock %}

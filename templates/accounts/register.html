@@ -1,116 +1,386 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Create Account — LAUTECH Library{% endblock %}
-{% block body_class %}page-register-v2{% endblock %}
-{% block main_class %}main-register-v2{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+{% block main_class %}{% endblock %}
 
-{% block site_header %}
-  {% include "includes/guest_topbar.html" %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}?v=1.1">
 {% endblock %}
+
+{% block site_header %}{% endblock %}
 
 {% block content %}
-<div class="register-layout">
-  <section class="register-promo" aria-labelledby="register-promo-title">
-    <h1 id="register-promo-title" class="register-promo-title">
-      Join the Digital Academic Commons.
-    </h1>
-    <p class="register-promo-lead">
-      Access thousands of journals, digital archives, and physical resources with your
-      LAUTECH student identity. Manage your loans and research from anywhere.
-    </p>
-    <ul class="register-features">
-      <li>
-        <span class="register-feature-icon" aria-hidden="true">🎓</span>
-        <div>
-          <strong>University Verified</strong>
-          <span>Syncs directly with the university student portal.</span>
-        </div>
-      </li>
-      <li>
-        <span class="register-feature-icon" aria-hidden="true">📖</span>
-        <div>
-          <strong>Reservation System</strong>
-          <span>Hold books before you even arrive at the campus library.</span>
-        </div>
-      </li>
-    </ul>
-  </section>
+<div class="auth-screen" id="auth-register-screen">
+  <div style="position: absolute; top: 24px; right: 24px; z-index: 100;">
+    <button type="button" class="theme-toggle" aria-label="Toggle dark/light theme">
+      <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+      <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
+  </div>
 
-  <section class="register-card-wrap" aria-labelledby="register-form-title">
-    <div class="register-card">
-      <h2 id="register-form-title" class="register-card-title">Create Account</h2>
-      <p class="register-card-sub">Enter your university credentials to begin.</p>
+  <div class="auth-right">
+    <div class="auth-card auth-card--wide" role="main">
 
-      <form method="post" novalidate class="register-form">
+      {# Logo #}
+      <div class="auth-logo-row">
+        <div class="auth-logo-badge" aria-hidden="true">
+          <img src="{% static 'img/lautech-logo.png' %}" alt="Logo" style="height: 24px; width: auto;">
+        </div>
+        <span class="auth-logo-text">LAUTECH Library</span>
+      </div>
+
+      <h1 class="auth-heading">Create Account</h1>
+      <p class="auth-subheading">Enter your university details to get started.</p>
+
+      {# ── Alerts ── #}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="auth-banner auth-banner--{{ message.tags }}" role="alert" aria-live="polite">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {# ── Registration form ── #}
+      <form
+        method="post"
+        novalidate
+        class="auth-form"
+        id="register-form"
+        aria-label="Create account form"
+      >
         {% csrf_token %}
+
         {% if form.non_field_errors %}
-          <div class="register-alert">{% for e in form.non_field_errors %}{{ e }}{% endfor %}</div>
+          <div class="auth-banner auth-banner--error" role="alert" aria-live="assertive">
+            {% for e in form.non_field_errors %}{{ e }}{% endfor %}
+          </div>
         {% endif %}
 
-        <div class="form-group">
-          <label for="{{ form.matric_no.id_for_label }}">Matric Number</label>
-          <div class="reg-input-icon-wrap">
-            {{ form.matric_no }}
-            <span class="reg-field-icon" aria-hidden="true">🪪</span>
-          </div>
-          {% if form.matric_no.errors %}<p class="field-error">{% for e in form.matric_no.errors %}{{ e }}{% endfor %}</p>{% endif %}
-        </div>
+        <div class="auth-form-grid">
 
-        <div class="form-group">
-          <label for="{{ form.first_name.id_for_label }}">Full Name</label>
-          {{ form.first_name }}
+          {# ─ Matric Number (full width) ─ #}
+          <div class="auth-field auth-field--full {% if form.matric_no.errors %}auth-field--error{% endif %}">
+            <label class="auth-field-label" for="{{ form.matric_no.id_for_label }}">
+              Matric Number
+            </label>
+            <div class="auth-input-box">
+              <svg class="auth-input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                <line x1="2" y1="10" x2="22" y2="10"/>
+              </svg>
+              {{ form.matric_no }}
+            </div>
+            {% if form.matric_no.errors %}
+              <p class="auth-field-error" role="alert">{% for e in form.matric_no.errors %}{{ e }}{% endfor %}</p>
+            {% endif %}
+          </div>
+
+          {# ─ Full Name ─ #}
+          <div class="auth-field auth-field--full {% if form.first_name.errors %}auth-field--error{% endif %}">
+            <label class="auth-field-label" for="{{ form.first_name.id_for_label }}">
+              Full Name
+            </label>
+            <div class="auth-input-box">
+              <svg class="auth-input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              {{ form.first_name }}
+            </div>
+            {% if form.first_name.errors %}
+              <p class="auth-field-error" role="alert">{% for e in form.first_name.errors %}{{ e }}{% endfor %}</p>
+            {% endif %}
+          </div>
           {{ form.last_name }}
-          {% if form.first_name.errors %}<p class="field-error">{% for e in form.first_name.errors %}{{ e }}{% endfor %}</p>{% endif %}
-        </div>
 
-        <div class="form-group">
-          <label for="{{ form.email.id_for_label }}">Email Address</label>
-          {{ form.email }}
-          {% if form.email.errors %}<p class="field-error">{% for e in form.email.errors %}{{ e }}{% endfor %}</p>{% endif %}
-        </div>
-
-        <div class="form-group">
-          <label for="{{ form.department.id_for_label }}">Department</label>
-          {{ form.department }}
-          {% if form.department.errors %}<p class="field-error">{% for e in form.department.errors %}{{ e }}{% endfor %}</p>{% endif %}
-        </div>
-
-        <div class="register-password-row">
-          <div class="form-group">
-            <label for="{{ form.password1.id_for_label }}">Password</label>
-            {{ form.password1 }}
-            {% if form.password1.errors %}<p class="field-error">{% for e in form.password1.errors %}{{ e }}{% endfor %}</p>{% endif %}
+          {# ─ Email (full width) ─ #}
+          <div class="auth-field auth-field--full {% if form.email.errors %}auth-field--error{% endif %}">
+            <label class="auth-field-label" for="{{ form.email.id_for_label }}">
+              Email Address
+            </label>
+            <div class="auth-input-box">
+              <svg class="auth-input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              {{ form.email }}
+            </div>
+            {% if form.email.errors %}
+              <p class="auth-field-error" role="alert">{% for e in form.email.errors %}{{ e }}{% endfor %}</p>
+            {% endif %}
           </div>
-          <div class="form-group">
-            <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
-            {{ form.password2 }}
-            {% if form.password2.errors %}<p class="field-error">{% for e in form.password2.errors %}{{ e }}{% endfor %}</p>{% endif %}
-          </div>
-        </div>
 
-        <button type="submit" class="btn-gold btn-gold--full">Create Account</button>
+          {# ─ Department (full width) ─ #}
+          <div class="auth-field auth-field--full {% if form.department.errors %}auth-field--error{% endif %}">
+            <label class="auth-field-label" for="{{ form.department.id_for_label }}">
+              Department
+            </label>
+            <div class="auth-input-box">
+              <svg class="auth-input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+              {{ form.department }}
+              <svg class="auth-select-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
+            {% if form.department.errors %}
+              <p class="auth-field-error" role="alert">{% for e in form.department.errors %}{{ e }}{% endfor %}</p>
+            {% endif %}
+          </div>
+
+          {# ─ Password ─ #}
+          <div class="auth-field {% if form.password1.errors %}auth-field--error{% endif %}">
+            <label class="auth-field-label" for="{{ form.password1.id_for_label }}">
+              Password
+            </label>
+            <div class="auth-input-box auth-input-has-toggle">
+              <svg class="auth-input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              {{ form.password1 }}
+              <button
+                type="button"
+                class="auth-pw-btn"
+                id="reg-pw1-toggle"
+                aria-label="Show password"
+                data-target="{{ form.password1.id_for_label }}"
+              >
+                <svg class="pw-icon-show" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg class="pw-icon-hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                  <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              </button>
+            </div>
+
+            {# ── Password strength meter ── #}
+            <div class="auth-pw-strength" id="pw-strength-wrap" aria-live="polite" aria-label="Password strength indicator">
+              <div class="auth-pw-strength-bar" aria-hidden="true">
+                <div class="auth-pw-strength-seg" id="pw-seg-1"></div>
+                <div class="auth-pw-strength-seg" id="pw-seg-2"></div>
+                <div class="auth-pw-strength-seg" id="pw-seg-3"></div>
+                <div class="auth-pw-strength-seg" id="pw-seg-4"></div>
+              </div>
+              <div class="auth-pw-reqs" role="list" aria-label="Password requirements">
+                <div class="auth-pw-req" id="req-length" role="listitem">
+                  <span class="auth-pw-req-dot" aria-hidden="true"></span>
+                  At least 8 characters
+                </div>
+                <div class="auth-pw-req" id="req-upper" role="listitem">
+                  <span class="auth-pw-req-dot" aria-hidden="true"></span>
+                  Uppercase letter
+                </div>
+                <div class="auth-pw-req" id="req-number" role="listitem">
+                  <span class="auth-pw-req-dot" aria-hidden="true"></span>
+                  Number
+                </div>
+                <div class="auth-pw-req" id="req-special" role="listitem">
+                  <span class="auth-pw-req-dot" aria-hidden="true"></span>
+                  Special character
+                </div>
+              </div>
+            </div>
+
+            {% if form.password1.errors %}
+              <p class="auth-field-error" role="alert">{% for e in form.password1.errors %}{{ e }}{% endfor %}</p>
+            {% endif %}
+          </div>
+
+          {# ─ Confirm Password ─ #}
+          <div class="auth-field {% if form.password2.errors %}auth-field--error{% endif %}">
+            <label class="auth-field-label" for="{{ form.password2.id_for_label }}">
+              Confirm Password
+            </label>
+            <div class="auth-input-box auth-input-has-toggle">
+              <svg class="auth-input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              {{ form.password2 }}
+              <button
+                type="button"
+                class="auth-pw-btn"
+                id="reg-pw2-toggle"
+                aria-label="Show confirm password"
+                data-target="{{ form.password2.id_for_label }}"
+              >
+                <svg class="pw-icon-show" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg class="pw-icon-hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                  <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              </button>
+            </div>
+            <div id="pw-match-msg" style="display:none;margin-top:0.25rem"></div>
+            {% if form.password2.errors %}
+              <p class="auth-field-error" role="alert">{% for e in form.password2.errors %}{{ e }}{% endfor %}</p>
+            {% endif %}
+          </div>
+
+        </div>{# /auth-form-grid #}
+
+        {# ─ Submit ─ #}
+        <button
+          type="submit"
+          class="auth-btn-primary"
+          id="register-submit"
+          aria-label="Create your library account"
+          style="margin-top: 0.5rem"
+        >
+          <span class="auth-btn-spinner" aria-hidden="true"></span>
+          <span class="auth-btn-label">Create Account</span>
+        </button>
       </form>
 
-      <p class="register-signin">
-        Already have an account? <a href="{% url 'accounts:login' %}">Sign In</a>
+      <p class="auth-footer-text">
+        Already have an account?
+        <a href="{% url 'accounts:login' %}">Sign in</a>
       </p>
-    </div>
-  </section>
-</div>
+
+    </div>{# /auth-card #}
+  </div>{# /auth-right #}
+
+</div>{# /auth-screen #}
 {% endblock %}
 
-{% block footer %}
-<footer class="site-footer site-footer--landing">
-  <div class="landing-footer-inner">
-    <p>
-      Ladoke Akintola University of Technology, Ogbomoso —
-      Department of Computer Science — Final Year Project
-    </p>
-    <nav class="landing-footer-links" aria-label="Footer links">
-      <a href="#">Library Guidelines</a>
-      <a href="#">Contact Librarian</a>
-      <a href="#">Privacy Policy</a>
-    </nav>
-  </div>
-</footer>
+{% block footer %}{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  'use strict';
+
+  /* ── Universal password toggle ── */
+  function initPwToggle(btnId) {
+    var btn = document.getElementById(btnId);
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var input = document.getElementById(btn.getAttribute('data-target'));
+      if (!input) return;
+      var hide = input.type === 'password';
+      input.type = hide ? 'text' : 'password';
+      btn.querySelector('.pw-icon-show').style.display = hide ? 'none' : '';
+      btn.querySelector('.pw-icon-hide').style.display = hide ? '' : 'none';
+      btn.setAttribute('aria-label', hide ? 'Hide password' : 'Show password');
+    });
+  }
+  initPwToggle('reg-pw1-toggle');
+  initPwToggle('reg-pw2-toggle');
+
+  /* ── Password strength meter ── */
+  var pw1El  = document.getElementById('{{ form.password1.id_for_label }}');
+  var segs   = [
+    document.getElementById('pw-seg-1'),
+    document.getElementById('pw-seg-2'),
+    document.getElementById('pw-seg-3'),
+    document.getElementById('pw-seg-4'),
+  ];
+  var reqEls = {
+    length:  document.getElementById('req-length'),
+    upper:   document.getElementById('req-upper'),
+    number:  document.getElementById('req-number'),
+    special: document.getElementById('req-special'),
+  };
+
+  var strengthClasses = ['active-weak', 'active-fair', 'active-good', 'active-strong'];
+
+  function setMet(el, met) {
+    if (!el) return;
+    el.classList.toggle('met', met);
+    el.setAttribute('aria-label', (met ? 'Met: ' : 'Not met: ') + el.textContent.trim());
+  }
+
+  function evalPassword(val) {
+    var checks = {
+      length:  val.length >= 8,
+      upper:   /[A-Z]/.test(val),
+      number:  /[0-9]/.test(val),
+      special: /[^A-Za-z0-9]/.test(val),
+    };
+    var score = Object.values(checks).filter(Boolean).length; // 0-4
+
+    /* Update requirement pills */
+    Object.keys(checks).forEach(function (key) { setMet(reqEls[key], checks[key]); });
+
+    /* Update strength bar */
+    segs.forEach(function (seg, i) {
+      seg.className = 'auth-pw-strength-seg';
+      if (i < score) seg.classList.add(strengthClasses[score - 1]);
+    });
+
+    return score;
+  }
+
+  if (pw1El) {
+    pw1El.addEventListener('input', function () { evalPassword(pw1El.value); });
+  }
+
+  /* ── Confirm password match indicator ── */
+  var pw2El     = document.getElementById('{{ form.password2.id_for_label }}');
+  var matchMsg  = document.getElementById('pw-match-msg');
+
+  function checkMatch() {
+    if (!pw2El || !pw1El || !matchMsg) return;
+    var val = pw2El.value;
+    if (!val) { matchMsg.style.display = 'none'; return; }
+    matchMsg.style.display = 'flex';
+    var matches = val === pw1El.value;
+    matchMsg.className = 'auth-field-error';
+    matchMsg.style.color = matches ? '#059669' : '#DC2626';
+    matchMsg.textContent = matches ? '✓ Passwords match' : '✗ Passwords do not match';
+  }
+
+  if (pw2El) pw2El.addEventListener('input', checkMatch);
+  if (pw1El) pw1El.addEventListener('input', checkMatch);
+
+  /* ── Submit spinner ── */
+  var regForm = document.getElementById('register-form');
+  var regBtn  = document.getElementById('register-submit');
+  if (regForm && regBtn) {
+    regForm.addEventListener('submit', function () {
+      regBtn.classList.add('is-loading');
+      regBtn.disabled = true;
+    });
+  }
+
+  /* ── Placeholder hints ── */
+  var hints = {
+    '{{ form.matric_no.id_for_label }}':   'e.g. 2021CS001',
+    '{{ form.first_name.id_for_label }}':  'First name',
+    '{{ form.last_name.id_for_label }}':   'Last name',
+    '{{ form.email.id_for_label }}':        'you@lautech.edu.ng',
+    '{{ form.password1.id_for_label }}':   '••••••••',
+    '{{ form.password2.id_for_label }}':   '••••••••',
+  };
+  Object.keys(hints).forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el && !el.getAttribute('placeholder')) el.setAttribute('placeholder', hints[id]);
+  });
+
+})();
+</script>
 {% endblock %}

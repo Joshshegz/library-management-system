@@ -11,7 +11,7 @@
 {% block content %}
 <div class="dash-header-row">
   <div>
-    <h1 class="dash-greeting">{{ greeting }}, {{ user.get_full_name }}</h1>
+    <h1 class="dash-greeting">{{ greeting }}, {{ user.first_name|default:user.matric_no }}! 👋</h1>
     <p class="dash-sub">
       The library is open.
       {% if due_soon_count %}
@@ -40,10 +40,11 @@
   <a href="{% url 'catalog:book_list' %}" class="dash-card dash-card--catalogue">
     <span class="dash-card-icon" aria-hidden="true">📚</span>
     <h2>Browse Catalogue</h2>
-    <p>Search academic books and check real-time availability.</p>
+    <p>Discover academic books, journals and check real-time copy availability.</p>
     <span class="dash-card-link">Explore Now →</span>
   </a>
 
+  {% if not user.is_librarian %}
   <a href="{% url 'circulation:my_loans' %}" class="dash-card dash-card--loans">
     <span class="dash-card-icon dash-card-icon--round" aria-hidden="true">📋</span>
     <h2>My Loans</h2>
@@ -72,6 +73,7 @@
       <p class="dash-empty">No recent loans. <a href="{% url 'catalog:book_list' %}">Browse catalogue</a></p>
     {% endif %}
   </section>
+  {% endif %}
 
   {% if not fully_enrolled %}
     <section class="dash-card dash-card--enrol-wide">
@@ -96,8 +98,8 @@
   <section class="dash-card dash-card--support">
     <span class="dash-support-icon" aria-hidden="true">?</span>
     <h2>Need Assistance?</h2>
-    <p>Connect with a virtual librarian</p>
-    <a href="#">Chat Now</a>
+    <p>Connect with a virtual librarian for help.</p>
+    <a href="#" id="chat-now-btn">Chat Now</a>
   </section>
 </div>
 {% endblock %}

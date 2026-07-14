@@ -1,61 +1,61 @@
-{% extends "base.html" %}
+{% extends "app_base.html" %}
 
-{% block title %}Catalogue — LAUTECH Library{% endblock %}
-{% block body_class %}page-app-v2{% endblock %}
-{% block main_class %}main-app-v2{% endblock %}
+{% block title %}Book Management — LAUTECH Library{% endblock %}
+{% block nav_active %}catalogue{% endblock %}
 
-{% block site_header %}
-  {% include "includes/app_topbar.html" %}
-{% endblock %}
-
-{% block content %}
-<header class="loans-page-header">
-  <div>
-    <h1 class="loans-page-title">Library catalogue</h1>
-    <p class="loans-page-sub">Browse and search academic resources available at LAUTECH Library.</p>
+{% block app_content %}
+<div class="page-container">
+  <div class="page-header-modern">
+    <h1 class="page-title">Book Management</h1>
   </div>
-  {% if user.is_librarian %}
-    <a href="{% url 'catalog:book_create' %}" class="btn-gold btn-inline">Add book</a>
-  {% endif %}
-</header>
+  
+  <div class="tabs-container">
+    <a href="{% url 'catalog:book_list' %}" class="tab-btn active">Library</a>
+    {% if user.is_librarian %}
+      <a href="{% url 'catalog:book_create' %}" class="tab-btn">Add New Book</a>
+    {% endif %}
+  </div>
 
-<form method="get" class="search-bar">
-  <input type="search" name="q" value="{{ query }}" placeholder="Search title, author, ISBN…" class="form-control">
-  <select name="category" class="form-control">
-    <option value="">All categories</option>
-    {% for cat in categories %}
-      <option value="{{ cat }}" {% if category == cat %}selected{% endif %}>{{ cat }}</option>
-    {% endfor %}
-  </select>
-  <button type="submit" class="btn-gold btn-inline">Search</button>
-</form>
+  <form method="get" class="search-form-modern">
+    <input type="search" name="q" value="{{ query|default:'' }}" placeholder="Search by title..." class="search-input-modern">
+  </form>
 
-{% if books %}
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Author</th>
-        <th>Category</th>
-        <th>Available</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for book in books %}
+  <div class="table-card">
+    <table class="table-modern">
+      <thead>
         <tr>
-          <td><a href="{% url 'catalog:book_detail' book.pk %}">{{ book.title }}</a></td>
-          <td>{{ book.author }}</td>
-          <td>{{ book.category|default:"—" }}</td>
-          <td>{{ book.available_copies }} / {{ book.total_copies }}</td>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th class="actions-col">Actions</th>
         </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-{% else %}
-  <p class="empty-state">No books found.{% if user.is_librarian %} <a href="{% url 'catalog:book_create' %}">Add the first book</a>.{% endif %}</p>
-{% endif %}
-{% endblock %}
-
-{% block footer %}
-  {% include "includes/app_footer.html" %}
+      </thead>
+      <tbody>
+        {% for book in books %}
+          <tr>
+            <td class="font-medium"><a href="{% url 'catalog:book_detail' book.pk %}" class="book-title-link">{{ book.title }}</a></td>
+            <td class="text-muted">{{ book.author }}</td>
+            <td class="text-muted">{{ book.category|default:"—" }}</td>
+            <td>
+              {% if book.available_copies > 0 %}
+                <span class="status-badge available">{{ book.available_copies }} Available</span>
+              {% else %}
+                <span class="status-badge unavailable">Unavailable</span>
+              {% endif %}
+            </td>
+            <td class="actions-col">
+              <!-- Add any specific actions here -->
+              <a href="{% url 'catalog:book_detail' book.pk %}" class="action-link">View</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5" class="empty-state">No books found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 {% endblock %}

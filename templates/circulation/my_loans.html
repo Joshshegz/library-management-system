@@ -1,121 +1,100 @@
-{% extends "base.html" %}
+{% extends "app_base.html" %}
 
-{% block title %}My Loans — LAUTECH Library{% endblock %}
-{% block body_class %}page-app-v2{% endblock %}
-{% block main_class %}main-app-v2{% endblock %}
+{% block title %}Borrowed Books — LAUTECH Library{% endblock %}
+{% block nav_active %}loans{% endblock %}
 
-{% block site_header %}
-  {% include "includes/app_topbar.html" %}
-{% endblock %}
-
-{% block content %}
-<header class="loans-page-header">
-  <div>
-    <h1 class="loans-page-title">Active Loans</h1>
-    <p class="loans-page-sub">
-      Manage your currently borrowed academic resources and track return deadlines.
-    </p>
+{% block app_content %}
+<div class="page-container">
+  
+  <div class="page-header-modern">
+    <h1 class="page-title">Borrowed Books</h1>
   </div>
-</header>
 
-<div class="loans-stats-row">
-  <article class="loans-stat-card">
-    <span class="loans-stat-icon" aria-hidden="true">📚</span>
-    <p class="loans-stat-value">{{ active_loans|length }}</p>
-    <p class="loans-stat-label">Total Borrowed</p>
-  </article>
-  <article class="loans-stat-card{% if overdue_count %} loans-stat-card--warn{% endif %}">
-    <span class="loans-stat-icon" aria-hidden="true">⚠</span>
-    <p class="loans-stat-value">{{ overdue_count }}</p>
-    <p class="loans-stat-label">Overdue Books</p>
-  </article>
-  <article class="loans-stat-card">
-    <span class="loans-stat-icon" aria-hidden="true">📅</span>
-    <p class="loans-stat-value loans-stat-value--sm">
-      {% if next_due %}{{ next_due.due_at|date:"M j, Y" }}{% else %}—{% endif %}
-    </p>
-    <p class="loans-stat-label">Next Due Date</p>
-  </article>
-</div>
-
-<section class="loans-table-section" aria-labelledby="subs-title">
-  <div class="loans-table-bar">
-    <h2 id="subs-title">Current Subscriptions</h2>
-    <span>{{ user.department|default:"Department of Computer Science" }}</span>
-  </div>
-  {% if active_loans %}
-    <div class="loans-table-wrap">
-      <table class="loans-table">
-        <thead>
+  <!-- Active Loans Section -->
+  <div class="table-card" style="margin-bottom: 3rem;">
+    <table class="table-modern">
+      <thead>
+        <tr>
+          <th>Book Title</th>
+          <th>Copy ID</th>
+          <th>Borrowed Date</th>
+          <th>Due Date</th>
+          <th>Status</th>
+          <th class="actions-col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for loan in active_loans %}
           <tr>
-            <th>Book Title</th>
-            <th>Copy ID</th>
-            <th>Borrowed Date</th>
-            <th>Due Date</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <td class="font-medium">
+              <a href="{% url 'catalog:book_detail' loan.book.pk %}" class="book-title-link">{{ loan.book.title }}</a>
+            </td>
+            <td class="text-muted">{{ loan.book_copy.copy_code }}</td>
+            <td class="text-muted">{{ loan.borrowed_at|date:"M j, Y" }}</td>
+            <td class="font-medium {% if loan.is_overdue %}text-red-500{% endif %}">
+              {{ loan.due_at|date:"M j, Y" }}
+            </td>
+            <td>
+              {% if loan.is_overdue %}
+                <span class="status-badge unavailable">Overdue</span>
+              {% else %}
+                <span class="status-badge available">Active</span>
+              {% endif %}
+            </td>
+            <td class="actions-col">
+              <a href="{% url 'circulation:return_book' loan.pk %}" class="action-link">Return</a>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {% for loan in active_loans %}
-            <tr>
-              <td class="loans-book-cell">
-                <span class="loans-book-thumb" aria-hidden="true">📕</span>
-                <a href="{% url 'catalog:book_detail' loan.book.pk %}">{{ loan.book.title }}</a>
-              </td>
-              <td>{{ loan.book_copy.copy_code }}</td>
-              <td>{{ loan.borrowed_at|date:"M j, Y" }}</td>
-              <td class="{% if loan.is_overdue %}loans-due-over{% endif %}">
-                {{ loan.due_at|date:"M j, Y" }}
-              </td>
-              <td>
-                {% if loan.is_overdue %}
-                  <span class="loans-status-pill loans-status-pill--over">OVERDUE</span>
-                {% else %}
-                  <span class="loans-status-pill loans-status-pill--active">ACTIVE</span>
-                {% endif %}
-              </td>
-              <td>
-                <a href="{% url 'circulation:return_book' loan.pk %}" class="loans-return-link">Return</a>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  {% else %}
-    <p class="loans-empty">No active loans. <a href="{% url 'catalog:book_list' %}">Browse catalogue</a></p>
-  {% endif %}
-</section>
-
-<section class="loans-history-section" aria-labelledby="history-title">
-  <div class="loans-history-head">
-    <div>
-      <h2 id="history-title">Recently Returned</h2>
-      <p class="loans-history-sub">Your latest returns on record</p>
-    </div>
-    <a href="#" class="loans-history-all">View Full History →</a>
+        {% empty %}
+          <tr>
+            <td colspan="6" class="empty-state" style="padding: 24px; text-align: center; color: var(--lautech-muted);">
+              No active loans at the moment. <br><br>
+              <a href="{% url 'catalog:book_list' %}" class="tab-btn active" style="display:inline-block; text-decoration:none;">Browse catalogue</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
-  {% if history_loans %}
-    <div class="loans-history-grid">
-      {% for loan in history_loans %}
-        <article class="loans-history-card">
-          <div class="loans-history-cover" aria-hidden="true">📖</div>
-          <h3>{{ loan.book.title|truncatechars:35 }}</h3>
-          <p>Returned {{ loan.returned_at|date:"M j, Y" }}</p>
-          <span class="loans-record-tag">RECORD #{{ loan.pk }}</span>
-        </article>
-      {% endfor %}
-      <article class="loans-history-card loans-history-card--archive">
-        <p>Older records archived</p>
-      </article>
-    </div>
-  {% else %}
-    <p class="loans-empty">No returned books yet.</p>
-  {% endif %}
-</section>
-{% endblock %}
 
-{% block footer %}
-  {% include "includes/app_footer.html" %}
+
+  <!-- History Books Section -->
+  <div class="page-header-modern" id="history">
+    <h2 class="page-title" style="font-size: 1.5rem; margin-bottom: 16px;">History Books</h2>
+  </div>
+  
+  <div class="table-card">
+    <table class="table-modern">
+      <thead>
+        <tr>
+          <th>Book Title</th>
+          <th>Copy ID</th>
+          <th>Borrowed Date</th>
+          <th>Returned Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for loan in history_loans %}
+          <tr>
+            <td class="font-medium">
+              <a href="{% url 'catalog:book_detail' loan.book.pk %}" class="book-title-link">{{ loan.book.title }}</a>
+            </td>
+            <td class="text-muted">{{ loan.book_copy.copy_code }}</td>
+            <td class="text-muted">{{ loan.borrowed_at|date:"M j, Y" }}</td>
+            <td class="text-muted">{{ loan.returned_at|date:"M j, Y" }}</td>
+            <td>
+              <span class="status-badge" style="color: var(--lautech-muted);">Returned</span>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5" class="empty-state" style="padding: 24px; text-align: center; color: var(--lautech-muted);">No returned books in your history yet.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
 {% endblock %}

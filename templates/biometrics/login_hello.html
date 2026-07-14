@@ -1,82 +1,94 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Biometric Authentication — LAUTECH Library{% endblock %}
-{% block body_class %}page-hello-v2{% endblock %}
-{% block main_class %}main-hello-v2{% endblock %}
+{% block title %}Biometric Sign In — LAUTECH Library{% endblock %}
+{% block body_class %}page-auth-split{% endblock %}
+{% block main_class %}main-auth-split{% endblock %}
 
-{% block site_header %}
-  {% include "includes/guest_topbar.html" %}
-{% endblock %}
+{% block site_header %}{% endblock %}
 
 {% block content %}
-<div class="hello-auth-page">
-  <div class="hello-auth-card">
-    <div class="hello-auth-icon" aria-hidden="true">👆</div>
-    <h1 class="hello-auth-title">Biometric Authentication</h1>
-    <p class="hello-auth-sub">
-      Use your device's built-in security to sign in faster.
-    </p>
+<div class="auth-split-layout" style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #F8FAFC; padding: 2rem;">
+  {# ── Centered panel: biometric form ── #}
+  <div class="auth-split-form-panel" style="background: white; border-radius: 16px; padding: 2.5rem; max-width: 440px; width: 100%; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08);">
+    <div class="auth-split-form-inner">
 
-    <div class="form-group">
-      <label for="matric_no">Matric Number</label>
-      <input
-        type="text"
-        id="matric_no"
-        class="form-control hello-field"
-        placeholder="e.g. 2021000382"
-        required
-        autocomplete="username"
+      <div class="auth-hello-badge" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+
+      <h1 class="auth-split-title">Biometric Sign In</h1>
+      <p class="auth-split-subtitle">Use your device's built-in security to sign in faster.</p>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="auth-alert auth-alert--{{ message.tags }}" role="alert">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      {# Matric number input #}
+      <div class="auth-field-group">
+        <label class="auth-label" for="matric_no">Matric Number</label>
+        <div class="auth-input-wrap">
+          <input
+            type="text"
+            id="matric_no"
+            class="auth-input"
+            placeholder="e.g. 2021000382"
+            required
+            autocomplete="username"
+          >
+        </div>
+      </div>
+
+      <button
+        type="button"
+        id="btn-windows-hello"
+        class="auth-submit-btn auth-submit-btn--hello"
+        data-mode="login"
+        data-auth-options="{% url 'biometrics:webauthn_auth_options' %}"
+        data-auth-complete="{% url 'biometrics:webauthn_auth_complete' %}"
       >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;flex-shrink:0;" aria-hidden="true">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+          <path d="M8 12.5l2.5 2.5L16 9"/>
+        </svg>
+        Sign in with Windows Hello
+      </button>
+
+      <p id="hello-status" class="hello-status-msg" role="status"></p>
+
+      <div class="auth-security-note">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-lock-icon" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        Your biometric data is stored locally and never sent to our servers.
+      </div>
+
+      <div class="auth-split-divider">
+        <span>or</span>
+      </div>
+
+      <a href="{% url 'accounts:login' %}" class="auth-alt-link">
+        Sign in with password instead
+      </a>
+
+      <p class="auth-register-row">
+        Don't have an account?
+        <a href="{% url 'accounts:register' %}" class="auth-register-link">Create account</a>
+      </p>
+
     </div>
-
-    <button
-      type="button"
-      id="btn-windows-hello"
-      class="btn-hello-primary"
-      data-mode="login"
-      data-auth-options="{% url 'biometrics:webauthn_auth_options' %}"
-      data-auth-complete="{% url 'biometrics:webauthn_auth_complete' %}"
-    >
-      <span class="btn-hello-shield" aria-hidden="true">🛡</span>
-      Sign in with Windows Hello
-    </button>
-
-    <p id="hello-status" class="hello-status" role="status"></p>
-
-    <div class="hello-divider" role="separator"><span>OR</span></div>
-
-    <a href="{% url 'accounts:login' %}" class="hello-password-link">
-      Sign in with password instead
-    </a>
   </div>
 
-  <div class="hello-security-note">
-    <p class="hello-lock-line">
-      <span aria-hidden="true">🔒</span> Secure End-to-End Encryption
-    </p>
-    <p class="hello-disclaimer">
-      Your biometric data is stored locally on your device and never sent to our servers.
-    </p>
-  </div>
 </div>
 {% endblock %}
 
-{% block footer %}
-<footer class="site-footer site-footer--landing">
-  <div class="landing-footer-inner">
-    <p>
-      Ladoke Akintola University of Technology, Ogbomoso —
-      Department of Computer Science — Final Year Project
-    </p>
-    <nav class="landing-footer-links" aria-label="Footer links">
-      <a href="#">Library Guidelines</a>
-      <a href="#">Contact Librarian</a>
-      <a href="#">Privacy Policy</a>
-    </nav>
-  </div>
-</footer>
-{% endblock %}
+{% block footer %}{% endblock %}
 
 {% block extra_js %}
 <script src="{% static 'js/webauthn_hello.js' %}"></script>

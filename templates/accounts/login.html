@@ -1,108 +1,230 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Sign in — LAUTECH Library{% endblock %}
-{% block body_class %}page-login-v2{% endblock %}
-{% block main_class %}main-login-v2{% endblock %}
+{% block title %}Sign In — LAUTECH Library{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+{% block main_class %}{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}?v=1.1">
+{% endblock %}
+
+{# No top navigation bar on auth pages #}
 {% block site_header %}{% endblock %}
 
 {% block content %}
-<div class="login-page">
-  <header class="login-brand">
-    <span class="login-brand-icon" aria-hidden="true">🏛</span>
-    <span class="login-brand-text">LAUTECH Library</span>
-  </header>
+<div class="auth-screen" id="auth-login-screen">
+  <div style="position: absolute; top: 24px; right: 24px; z-index: 100;">
+    <button type="button" class="theme-toggle" aria-label="Toggle dark/light theme">
+      <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+      <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
+  </div>
 
-  <h1 class="login-university-name">Ladoke Akintola</h1>
-  <p class="login-university-sub">University of Technology</p>
+  <div class="auth-right">
+    <div class="auth-card" role="main">
 
-  <div class="login-card">
-    <h2 class="login-card-title">Sign in to Portal</h2>
-    <p class="login-card-sub">Ogbomoso — Library portal</p>
-
-    <form method="post" novalidate class="login-form">
-      {% csrf_token %}
-      {% if form.non_field_errors %}
-        <div class="login-alert" role="alert">
-          {% for e in form.non_field_errors %}{{ e }}{% endfor %}
+      {# Logo row #}
+      <div class="auth-logo-row">
+        <div class="auth-logo-badge" aria-hidden="true">
+          <img src="{% static 'img/lautech-logo.png' %}" alt="Logo" style="height: 24px; width: auto;">
         </div>
+        <div class="auth-logo-text">LAUTECH Library</div>
+      </div>
+
+      <h1 class="auth-heading">Welcome Back</h1>
+      <p class="auth-subheading">Sign in to access your library account.</p>
+
+      {# ── Alert messages ── #}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="auth-banner auth-banner--{{ message.tags }}" role="alert" aria-live="polite">
+            {{ message }}
+          </div>
+        {% endfor %}
       {% endif %}
 
-      <div class="form-group login-field-group{% if form.username.errors %} has-error{% endif %}">
-        <label for="{{ form.username.id_for_label }}">Matric Number</label>
-        <div class="login-input-wrap">
-          {{ form.username }}
+      {# ── Login form ── #}
+      <form
+        method="post"
+        novalidate
+        class="auth-form"
+        id="login-form"
+        aria-label="Sign in form"
+      >
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="auth-banner auth-banner--error" role="alert" aria-live="assertive">
+            {% for e in form.non_field_errors %}{{ e }}{% endfor %}
+          </div>
+        {% endif %}
+
+        {# ─ Matric Number ─ #}
+        <div class="auth-field {% if form.username.errors %}auth-field--error{% endif %}">
+          <label class="auth-field-label" for="{{ form.username.id_for_label }}">
+            Matric Number
+          </label>
+          <div class="auth-input-box">
+            {# ID icon #}
+            <svg class="auth-input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="5" width="20" height="14" rx="2"/>
+              <line x1="2" y1="10" x2="22" y2="10"/>
+            </svg>
+            {{ form.username }}
+          </div>
           {% if form.username.errors %}
-            <span class="login-field-error-icon" aria-hidden="true">!</span>
+            <p class="auth-field-error" role="alert">
+              {% for e in form.username.errors %}{{ e }}{% endfor %}
+            </p>
           {% endif %}
         </div>
-        {% if form.username.errors %}
-          <p class="login-field-error">{% for e in form.username.errors %}{{ e }}{% endfor %}</p>
-        {% endif %}
-      </div>
 
-      <div class="form-group login-field-group{% if form.password.errors %} has-error{% endif %}">
-        <div class="login-label-row">
-          <label for="{{ form.password.id_for_label }}">Password</label>
-          <a href="#" class="login-forgot">Forgot?</a>
+        {# ─ Password ─ #}
+        <div class="auth-field {% if form.password.errors %}auth-field--error{% endif %}">
+          <label class="auth-field-label" for="{{ form.password.id_for_label }}">
+            Password
+          </label>
+          <div class="auth-input-box auth-input-has-toggle">
+            {# Lock icon #}
+            <svg class="auth-input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            {{ form.password }}
+            <button
+              type="button"
+              class="auth-pw-btn"
+              id="login-pw-toggle"
+              aria-label="Show or hide password"
+              data-target="{{ form.password.id_for_label }}"
+            >
+              {# Eye open icon (default — password hidden) #}
+              <svg class="pw-icon-show" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              {# Eye off icon (visible when password shown) #}
+              <svg class="pw-icon-hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+          {% if form.password.errors %}
+            <p class="auth-field-error" role="alert">
+              {% for e in form.password.errors %}{{ e }}{% endfor %}
+            </p>
+          {% endif %}
         </div>
-        <div class="login-input-wrap">
-          {{ form.password }}
-          <button type="button" class="login-toggle-pw" aria-label="Show password" data-target="id_password">
-            <span aria-hidden="true">👁</span>
-          </button>
+
+        {# ─ Forgot password ─ #}
+        <div class="auth-row-between">
+          <a href="#" class="auth-link" aria-label="Reset forgotten password">Forgot password?</a>
         </div>
-        {% if form.password.errors %}
-          <p class="login-field-error">{% for e in form.password.errors %}{{ e }}{% endfor %}</p>
-        {% endif %}
-      </div>
 
-      <button type="submit" class="btn-login-submit">
-        Sign In
-        <span class="btn-arrow" aria-hidden="true">→</span>
-      </button>
-    </form>
+        {# ─ Submit ─ #}
+        <button
+          type="submit"
+          class="auth-btn-primary"
+          id="login-submit"
+          aria-label="Sign in to your account"
+        >
+          <span class="auth-btn-spinner" aria-hidden="true"></span>
+          <span class="auth-btn-label">Sign In</span>
+        </button>
+      </form>
 
-    <div class="login-divider" role="separator"></div>
+      {# ─ Divider ─ #}
+      <div class="auth-divider" aria-hidden="true">or</div>
 
-    <a href="{% url 'biometrics:login' %}" class="login-hello-link">
-      <span class="login-hello-icon" aria-hidden="true">👆</span>
-      Sign in with Windows Hello
-    </a>
+      {# ─ Biometric button (WebAuthn — device-agnostic) ─ #}
+      <a
+        href="{% url 'biometrics:login' %}"
+        class="auth-biometric-btn"
+        id="biometric-login-btn"
+        aria-label="Sign in using your device biometrics (fingerprint, face ID, or Windows Hello)"
+      >
+        {# Fingerprint icon #}
+        <svg class="auth-biometric-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 10a2 2 0 0 0-2 2c0 1.5 1 4 1 5"/>
+          <path d="M12 6a6 6 0 0 1 6 6c0 4-3 7-3 9"/>
+          <path d="M12 2a10 10 0 0 1 10 10c0 6-4 10-5 13"/>
+          <path d="M9.5 10.5A2.5 2.5 0 0 1 12 8"/>
+          <path d="M6 12a6 6 0 0 1 2-4.47"/>
+          <path d="M3.5 12A8.5 8.5 0 0 1 12 3.5"/>
+        </svg>
+        Use Device Biometrics
+      </a>
 
-    <p class="login-register">
-      New student? <a href="{% url 'accounts:register' %}">Create account</a>
-    </p>
-  </div>
+      {# ─ Register row ─ #}
+      <p class="auth-footer-text">
+        Don't have an account?
+        <a href="{% url 'accounts:register' %}">Create account</a>
+      </p>
 
-  <div class="login-visual">
-    <img
-      src="{% static 'img/login-bookshelves.png' %}"
-      alt=""
-      class="login-visual-img"
-      width="720"
-      height="200"
-    />
-  </div>
-</div>
+    </div>{# /auth-card #}
+  </div>{# /auth-right #}
+
+</div>{# /auth-screen #}
 {% endblock %}
 
-{% block footer %}
-<footer class="site-footer site-footer--login">
-  <div class="login-footer-inner">
-    <p>
-      Ladoke Akintola University of Technology, Ogbomoso —
-      Department of Computer Science — Final Year Project
-    </p>
-    <nav class="login-footer-links" aria-label="Footer links">
-      <a href="#">Library Guidelines</a>
-      <a href="#">Privacy Policy</a>
-    </nav>
-  </div>
-</footer>
-{% endblock %}
+{% block footer %}{% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/login.js' %}"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ── Password show/hide toggle ── */
+  function initPwToggle(btnId) {
+    var btn = document.getElementById(btnId);
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var targetId = btn.getAttribute('data-target');
+      var input = document.getElementById(targetId);
+      if (!input) return;
+      var isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      btn.querySelector('.pw-icon-show').style.display = isHidden ? 'none' : '';
+      btn.querySelector('.pw-icon-hide').style.display = isHidden ? '' : 'none';
+      btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+    });
+  }
+  initPwToggle('login-pw-toggle');
+
+  /* ── Submit spinner ── */
+  var loginForm = document.getElementById('login-form');
+  var loginBtn  = document.getElementById('login-submit');
+  if (loginForm && loginBtn) {
+    loginForm.addEventListener('submit', function () {
+      loginBtn.classList.add('is-loading');
+      loginBtn.disabled = true;
+    });
+  }
+
+  /* ── Input style: add placeholder from Django widget ── */
+  var matricInput = document.getElementById('{{ form.username.id_for_label }}');
+  if (matricInput && !matricInput.getAttribute('placeholder')) {
+    matricInput.setAttribute('placeholder', 'e.g. 2021CS001');
+  }
+  var pwInput = document.getElementById('{{ form.password.id_for_label }}');
+  if (pwInput && !pwInput.getAttribute('placeholder')) {
+    pwInput.setAttribute('placeholder', '••••••••••');
+  }
+})();
+</script>
 {% endblock %}
