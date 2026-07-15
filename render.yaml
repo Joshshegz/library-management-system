@@ -1,6 +1,10 @@
-services:
+﻿services:
   - type: web
     name: library-management-system
-    runtime: python
-    buildCommand: bash build.sh
-    startCommand: gunicorn config.wsgi:application
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
