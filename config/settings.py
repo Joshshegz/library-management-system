@@ -27,15 +27,22 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-# Railway sets RAILWAY_PUBLIC_DOMAIN automatically (e.g. myapp.up.railway.app)
-_RAILWAY_DOMAIN = os.environ.get("RAILWAY_PUBLIC_DOMAIN", "")
+# Render sets RENDER_EXTERNAL_URL; Railway sets RAILWAY_PUBLIC_DOMAIN
+_RENDER_URL = os.environ.get("RENDER_EXTERNAL_URL", "")       # https://app.onrender.com
+_RAILWAY_DOMAIN = os.environ.get("RAILWAY_PUBLIC_DOMAIN", "") # app.up.railway.app
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = []
+
+if _RENDER_URL:
+    from urllib.parse import urlparse as _urlparse
+    _render_host = _urlparse(_RENDER_URL).hostname
+    if _render_host:
+        ALLOWED_HOSTS.append(_render_host)
+        CSRF_TRUSTED_ORIGINS.append(_RENDER_URL.rstrip("/"))
+
 if _RAILWAY_DOMAIN:
     ALLOWED_HOSTS.append(_RAILWAY_DOMAIN)
-
-CSRF_TRUSTED_ORIGINS = []
-if _RAILWAY_DOMAIN:
     CSRF_TRUSTED_ORIGINS.append(f"https://{_RAILWAY_DOMAIN}")
 
 
@@ -171,8 +178,12 @@ BIOMETRIC_LIVENESS_MIN_BLINK_DELTA = 0.012
 BIOMETRIC_LIVENESS_MIN_MOUTH_DELTA = 0.04
 BIOMETRIC_LIVENESS_MIN_Z_SPREAD = 0.006
 
-# WebAuthn — Railway sets RAILWAY_PUBLIC_DOMAIN automatically
+# WebAuthn — auto-configured for Render or Railway
 WEBAUTHN_RP_NAME = "LAUTECH Library"
-if _RAILWAY_DOMAIN:
+if _RENDER_URL:
+    from urllib.parse import urlparse as _up
+    WEBAUTHN_RP_ID = _up(_RENDER_URL).hostname
+    WEBAUTHN_ORIGIN = _RENDER_URL.rstrip("/")
+elif _RAILWAY_DOMAIN:
     WEBAUTHN_RP_ID = _RAILWAY_DOMAIN
     WEBAUTHN_ORIGIN = f"https://{_RAILWAY_DOMAIN}"
