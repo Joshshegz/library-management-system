@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: library-management-system
+    runtime: python
+    buildCommand: bash build.sh
+    startCommand: gunicorn config.wsgi:application
