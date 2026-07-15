@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -19,13 +20,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-hp*4y_dki-bb7t4e3z*(bn3hhhx^9gs@7ad)5yvl57q*=j@!u+"
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "django-insecure-hp*4y_dki-bb7t4e3z*(bn3hhhx^9gs@7ad)5yvl57q*=j@!u+",
+)
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ["*"]
+# Railway sets RAILWAY_PUBLIC_DOMAIN automatically (e.g. myapp.up.railway.app)
+_RAILWAY_DOMAIN = os.environ.get("RAILWAY_PUBLIC_DOMAIN", "")
+
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+if _RAILWAY_DOMAIN:
+    ALLOWED_HOSTS.append(_RAILWAY_DOMAIN)
+
+CSRF_TRUSTED_ORIGINS = []
+if _RAILWAY_DOMAIN:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{_RAILWAY_DOMAIN}")
 
 
 # Application definition
@@ -160,8 +171,8 @@ BIOMETRIC_LIVENESS_MIN_BLINK_DELTA = 0.012
 BIOMETRIC_LIVENESS_MIN_MOUTH_DELTA = 0.04
 BIOMETRIC_LIVENESS_MIN_Z_SPREAD = 0.006
 
-# Windows Hello via WebAuthn — RP ID / origin are taken from the browser URL automatically.
-# Leave WEBAUTHN_RP_ID and WEBAUTHN_ORIGIN unset unless deploying to production.
+# WebAuthn — Railway sets RAILWAY_PUBLIC_DOMAIN automatically
 WEBAUTHN_RP_NAME = "LAUTECH Library"
-# WEBAUTHN_RP_ID = None
-# WEBAUTHN_ORIGIN = None
+if _RAILWAY_DOMAIN:
+    WEBAUTHN_RP_ID = _RAILWAY_DOMAIN
+    WEBAUTHN_ORIGIN = f"https://{_RAILWAY_DOMAIN}"
