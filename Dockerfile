@@ -1,4 +1,4 @@
-﻿FROM python:3.12-slim
+FROM python:3.12-slim
 
 # Install system libraries required by MediaPipe and OpenCV
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -21,4 +21,4 @@ RUN python manage.py collectstatic --noinput
 
 EXPOSE 10000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:10000", "--workers", "2", "--timeout", "120", "config.wsgi:application"]
+CMD gunicorn --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 config.wsgi:application
