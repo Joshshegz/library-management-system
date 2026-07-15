@@ -227,19 +227,9 @@ def enroll_nose(request):
 
     try:
         face_features, nose_features = extract_biometrics_from_request(request)
-    except OSError as exc:
-        # Missing system library (e.g. libGLESv2) on the server — MediaPipe cannot run.
-        import logging
-        logging.getLogger(__name__).exception("MediaPipe system library missing: %s", exc)
-        messages.error(
-            request,
-            "Biometric processing is temporarily unavailable on this server "
-            "(missing graphics library). Please contact the administrator.",
-        )
-        return redirect("biometrics:enroll")
     except (ValueError, LivenessError, NoseExtractionError) as exc:
         messages.error(request, str(exc))
-        return redirect("biometrics:enroll")
+        return redirect("biometrics:enroll#step-nose")
 
     BiometricTemplate.objects.update_or_create(
         user=request.user,
