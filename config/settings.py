@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get(
     "django-insecure-hp*4y_dki-bb7t4e3z*(bn3hhhx^9gs@7ad)5yvl57q*=j@!u+",
 )
 
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+DEBUG = True
 
 # Render sets RENDER_EXTERNAL_URL; Railway sets RAILWAY_PUBLIC_DOMAIN
 _RENDER_URL = os.environ.get("RENDER_EXTERNAL_URL", "")       # https://app.onrender.com

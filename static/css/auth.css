@@ -866,43 +866,43 @@ body.auth-page main {
 .auth-field--error .auth-input-box select:focus {
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
 }/* --- DARK MODE OVERRIDES FOR AUTH PAGES --- */
-html[data-theme=""dark""] body.auth-page {
+html[data-theme="dark"] body.auth-page {
   background: var(--lautech-bg);
   color: var(--lautech-text);
 }
-html[data-theme=""dark""] .auth-card {
+html[data-theme="dark"] .auth-card {
   background: var(--lautech-surface);
   box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
 }
-html[data-theme=""dark""] .auth-heading,
-html[data-theme=""dark""] .auth-logo-text,
-html[data-theme=""dark""] .auth-field-label {
+html[data-theme="dark"] .auth-heading,
+html[data-theme="dark"] .auth-logo-text,
+html[data-theme="dark"] .auth-field-label {
   color: var(--lautech-text);
 }
-html[data-theme=""dark""] .auth-subheading,
-html[data-theme=""dark""] .auth-input-icon {
+html[data-theme="dark"] .auth-subheading,
+html[data-theme="dark"] .auth-input-icon {
   color: var(--lautech-muted);
 }
-html[data-theme=""dark""] .auth-input-box,
-html[data-theme=""dark""] .auth-input-box input,
-html[data-theme=""dark""] .auth-input-box select {
+html[data-theme="dark"] .auth-input-box,
+html[data-theme="dark"] .auth-input-box input,
+html[data-theme="dark"] .auth-input-box select {
   background: var(--lautech-bg);
   border-color: var(--lautech-border);
   color: var(--lautech-text);
 }
-html[data-theme=""dark""] .auth-input-box:focus-within {
+html[data-theme="dark"] .auth-input-box:focus-within {
   border-color: var(--lautech-gold);
   background: var(--lautech-surface);
 }
-html[data-theme=""dark""] .auth-link, 
-html[data-theme=""dark""] .auth-footer a {
+html[data-theme="dark"] .auth-link, 
+html[data-theme="dark"] .auth-footer a {
   color: var(--lautech-gold);
 }
-html[data-theme=""dark""] .auth-divider::before,
-html[data-theme=""dark""] .auth-divider::after {
+html[data-theme="dark"] .auth-divider::before,
+html[data-theme="dark"] .auth-divider::after {
   background: var(--lautech-border);
 }
-html[data-theme=""dark""] .auth-divider span {
+html[data-theme="dark"] .auth-divider span {
   background: var(--lautech-surface);
   color: var(--lautech-muted);
 }
