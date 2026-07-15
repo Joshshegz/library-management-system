@@ -5,7 +5,7 @@
 {% block main_class %}main-app-v2{% endblock %}
 
 {% block site_header %}
-  {% include "includes/app_topbar.html" %}
+{% include "includes/app_topbar.html" %}
 {% endblock %}
 
 {% block content %}
@@ -15,24 +15,24 @@
     <p class="dash-sub">
       The library is open.
       {% if due_soon_count %}
-        You have {{ due_soon_count }} item{{ due_soon_count|pluralize }} due soon.
+      You have {{ due_soon_count }} item{{ due_soon_count|pluralize }} due soon.
       {% elif active_loan_count %}
-        You have {{ active_loan_count }} active loan{{ active_loan_count|pluralize }}.
+      You have {{ active_loan_count }} active loan{{ active_loan_count|pluralize }}.
       {% else %}
-        You have no active loans right now.
+      You have no active loans right now.
       {% endif %}
     </p>
   </div>
 
   {% if not fully_enrolled %}
-    <aside class="dash-enrol-banner" role="status">
-      <span class="dash-enrol-icon" aria-hidden="true">👆</span>
-      <div>
-        <strong>Partially Enrolled</strong>
-        <span>Complete nose verification to unlock physical borrowing.</span>
-      </div>
-      <a href="{% url 'biometrics:enroll' %}" class="btn-dash-sm">Complete</a>
-    </aside>
+  <aside class="dash-enrol-banner" role="status">
+    <span class="dash-enrol-icon" aria-hidden="true">👆</span>
+    <div>
+      <strong>Partially Enrolled</strong>
+      <span>Complete nose verification to unlock physical borrowing.</span>
+    </div>
+    <a href="{% url 'biometrics:enroll' %}" class="btn-dash-sm">Complete</a>
+  </aside>
   {% endif %}
 </div>
 
@@ -54,45 +54,45 @@
   <section class="dash-card dash-card--activity" aria-labelledby="activity-title">
     <h2 id="activity-title" class="dash-activity-head">Recent Activity</h2>
     {% if recent_loans %}
-      <ul class="dash-activity-list">
-        {% for loan in recent_loans %}
-          <li class="dash-activity-item">
-            <div class="dash-book-thumb" aria-hidden="true">📕</div>
-            <div class="dash-activity-meta">
-              <strong>{{ loan.book.title|truncatechars:40 }}</strong>
-              <span>Borrowed {{ loan.borrowed_at|timesince }} ago</span>
-            </div>
-            <span class="dash-due-tag{% if loan.is_overdue %} dash-due-tag--over{% endif %}">
-              Due: {{ loan.due_at|date:"M j"|upper }}
-            </span>
-          </li>
-        {% endfor %}
-      </ul>
-      <a href="{% url 'circulation:my_loans' %}" class="dash-view-all">View All History</a>
+    <ul class="dash-activity-list">
+      {% for loan in recent_loans %}
+      <li class="dash-activity-item">
+        <div class="dash-book-thumb" aria-hidden="true">📕</div>
+        <div class="dash-activity-meta">
+          <strong>{{ loan.book.title|truncatechars:40 }}</strong>
+          <span>Borrowed {{ loan.borrowed_at|timesince }} ago</span>
+        </div>
+        <span class="dash-due-tag{% if loan.is_overdue %} dash-due-tag--over{% endif %}">
+          Due: {{ loan.due_at|date:"M j"|upper }}
+        </span>
+      </li>
+      {% endfor %}
+    </ul>
+    <a href="{% url 'circulation:my_loans' %}" class="dash-view-all">View All History</a>
     {% else %}
-      <p class="dash-empty">No recent loans. <a href="{% url 'catalog:book_list' %}">Browse catalogue</a></p>
+    <p class="dash-empty">No recent loans. <a href="{% url 'catalog:book_list' %}">Browse catalogue</a></p>
     {% endif %}
   </section>
   {% endif %}
 
   {% if not fully_enrolled %}
-    <section class="dash-card dash-card--enrol-wide">
-      <span class="dash-enrol-wide-icon" aria-hidden="true">🧑</span>
-      <div class="dash-enrol-wide-copy">
-        <h2>Continue Enrolment</h2>
-        <p>
-          Your biometric profile is {{ enrol_pct }}% complete.
-          {% if hello_done and not nose_done %}
-            Next step: Nose geometry scan for high-security areas.
-          {% elif not hello_done %}
-            Next step: Register Windows Hello on this device.
-          {% else %}
-            Enrolment complete.
-          {% endif %}
-        </p>
-      </div>
-      <a href="{% url 'biometrics:enroll' %}" class="btn-dash-primary">Start Scan</a>
-    </section>
+  <section class="dash-card dash-card--enrol-wide">
+    <span class="dash-enrol-wide-icon" aria-hidden="true">🧑</span>
+    <div class="dash-enrol-wide-copy">
+      <h2>Continue Enrolment</h2>
+      <p>
+        Your biometric profile is {{ enrol_pct }}% complete.
+        {% if hello_done and not nose_done %}
+        Next step: Nose geometry scan for high-security areas.
+        {% elif not hello_done %}
+        Next step: Register Windows Hello on this device.
+        {% else %}
+        Enrolment complete.
+        {% endif %}
+      </p>
+    </div>
+    <a href="{% url 'biometrics:enroll' %}" class="btn-dash-primary">Start Scan</a>
+  </section>
   {% endif %}
 
   <section class="dash-card dash-card--support">
@@ -105,5 +105,5 @@
 {% endblock %}
 
 {% block footer %}
-  {% include "includes/app_footer.html" %}
+{% include "includes/app_footer.html" %}
 {% endblock %}

@@ -24,10 +24,12 @@
   </p>
   {% if book.available_copies and user.is_authenticated %}
     <p style="margin-top:0.75rem">
-      {% if user.biometric_enrolled %}
-        <a href="{% url 'circulation:borrow_book' book.pk %}" class="btn-primary btn-inline">Borrow this book</a>
-      {% else %}
-        <a href="{% url 'biometrics:enroll' %}" class="btn-primary btn-inline">Set up Windows Hello to borrow</a>
+      {% if not user.is_librarian %}
+        {% if user.biometric_enrolled %}
+          <a href="{% url 'circulation:borrow_book' book.pk %}" class="btn-primary btn-inline">Borrow this book</a>
+        {% else %}
+          <a href="{% url 'biometrics:enroll' %}" class="btn-primary btn-inline">Set up Windows Hello to borrow</a>
+        {% endif %}
       {% endif %}
     </p>
   {% endif %}

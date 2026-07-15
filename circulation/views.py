@@ -62,6 +62,10 @@ def borrow_book(request, book_pk):
     if not available.exists():
         messages.error(request, "No copies are available for this book.")
         return redirect("catalog:book_detail", pk=book.pk)
+        
+    if request.user.is_librarian:
+        messages.error(request, "Librarians are not allowed to borrow books.")
+        return redirect("catalog:book_detail", pk=book.pk)
 
     if request.method == "POST":
         try:
