@@ -1,6 +1,6 @@
 # LAUTECH Library Management System
 
-Multimodal biometric library system (nose landmarks + thumbprint) — Final Year Project.
+Multimodal biometric library system (Windows Hello + nose landmarks) — Final Year Project.
 
 **Authors:** Adesanwo Joshua Olusegun (2021000382) & Abubakar Abdullah Ishaq (2021002417)  
 **Supervisor:** Prof. W. O. Ismaila
@@ -43,7 +43,7 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-Legacy nose/thumb pipeline code remains for thesis experiments; `evaluate_biometrics` still works if you enroll that way later.
+Run `python manage.py evaluate_biometrics` to benchmark enrolled templates (accuracy, FPR, sensitivity, average match time).
 
 ## Apps
 
@@ -54,10 +54,9 @@ Legacy nose/thumb pipeline code remains for thesis experiments; `evaluate_biomet
 | `circulation` | Borrow / return (nose verification) |
 | `biometrics` | Windows Hello + nose enrollment & matching |
 
-## Learning roadmap (PDF)
+## Seed data
 
-If you are learning Django alongside this FYP, use the bundled study guide:
-
-**[docs/django-roadmap-1-hour-per-day.pdf](docs/django-roadmap-1-hour-per-day.pdf)** — 1 hour/day plan with resource links; Module 12 capstone is this repository.
-
-See [docs/README.md](docs/README.md) to regenerate the PDF after edits.
+```powershell
+python manage.py populate_cs_books   # seed catalog books
+python scripts/seed_data.py          # seed users and loans
+```

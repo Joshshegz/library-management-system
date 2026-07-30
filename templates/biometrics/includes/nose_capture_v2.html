@@ -1,39 +1,77 @@
 <div class="nose-capture-v2" data-liveness-auto="true" data-liveness-pace="manual" data-mirror-camera="true">
-  <div class="nose-capture-v2-head">
-    <span class="nose-capture-v2-title">👤 Verify with Nose</span>
-    <span class="nose-live-badge"><span class="nose-live-dot"></span> LIVE FEED</span>
-  </div>
-  <div class="nose-video-frame">
-    <video id="nose-video" autoplay playsinline muted class="nose-video-el"></video>
-    <div class="nose-overlay" aria-hidden="true">
-      <span class="nose-overlay-ring"></span>
-      <span class="nose-overlay-dot"></span>
+
+  <!-- Header row -->
+  <div class="nc-header">
+    <div class="nc-header-left">
+      <span class="nc-icon-badge">👤</span>
+      <span class="nc-title">Nose Verification</span>
     </div>
-    <div class="liveness-prompt-overlay" id="liveness-prompt" aria-live="assertive">
+    <span class="nc-live-badge">
+      <span class="nc-live-dot"></span> LIVE
+    </span>
+  </div>
+
+  <!-- Video viewport -->
+  <div class="nose-video-frame nc-viewport">
+    <video id="nose-video" autoplay playsinline muted class="nose-video-el"></video>
+
+    <!-- Face targeting reticle -->
+    <div class="nc-reticle" aria-hidden="true">
+      <span class="nc-reticle-corner nc-reticle-tl"></span>
+      <span class="nc-reticle-corner nc-reticle-tr"></span>
+      <span class="nc-reticle-corner nc-reticle-bl"></span>
+      <span class="nc-reticle-corner nc-reticle-br"></span>
+      <span class="nc-reticle-nose-dot"></span>
+      <span class="nc-scan-line"></span>
+    </div>
+
+    <!-- Instruction overlay -->
+    <div class="liveness-prompt-overlay nc-overlay" id="liveness-prompt" aria-live="assertive">
       <p class="liveness-prompt-text" id="liveness-prompt-text">Starting camera…</p>
       <p class="liveness-countdown" id="liveness-countdown"></p>
     </div>
   </div>
+
   <canvas id="nose-canvas" class="nose-canvas-hidden"></canvas>
   <input type="hidden" name="nose_image" id="nose_image">
   <input type="hidden" name="nose_liveness_frames" id="nose_liveness_frames" value="">
 
-  <p class="nose-capture-hint" id="liveness-hint">
-    Use the button below each step when you are ready — you control the pace.
+  <!-- Hint text -->
+  <p class="nc-hint" id="liveness-hint">
+    Manual mode: tap the button when ready for each step (no auto countdown).
   </p>
 
+  <!-- Step progress pills -->
+  <div class="nc-steps" id="liveness-progress" aria-label="Liveness steps">
+    <div class="nc-step" data-step="1">
+      <span class="nc-step-num">1</span>
+      <span class="nc-step-label">Look ahead</span>
+    </div>
+    <div class="nc-step-connector"></div>
+    <div class="nc-step" data-step="2">
+      <span class="nc-step-num">2</span>
+      <span class="nc-step-label">Open mouth</span>
+    </div>
+    <div class="nc-step-connector"></div>
+    <div class="nc-step" data-step="3">
+      <span class="nc-step-num">3</span>
+      <span class="nc-step-label">Final capture</span>
+    </div>
+  </div>
+
+  <!-- Action button (next step / start) -->
   <button type="button" id="liveness-next-btn" class="btn-gold btn-gold--full liveness-next-btn" hidden>
     Continue
   </button>
-  <p class="liveness-status" id="liveness-status" role="status"></p>
-  <div class="liveness-progress" id="liveness-progress">
-    <span class="liveness-step" data-step="1" title="Look at camera">1</span>
-    <span class="liveness-step" data-step="2" title="Open mouth">2</span>
-    <span class="liveness-step" data-step="3" title="Final pose">3</span>
-  </div>
 
-  <button type="button" id="capture-nose" class="btn-gold btn-gold--full nose-capture-btn" hidden>
+  <!-- Status message -->
+  <p class="liveness-status" id="liveness-status" role="status"></p>
+
+  <!-- Repeat / retry trigger -->
+  <button type="button" id="capture-nose" class="nc-retry-btn" hidden>
     ↻ Repeat liveness check
   </button>
-  <img id="nose-preview" alt="" class="nose-preview-img">
+
+  <!-- Captured preview thumbnails -->
+  <div id="nose-preview-container" class="nc-preview-container" style="display: none;"></div>
 </div>

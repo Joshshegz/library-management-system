@@ -47,7 +47,7 @@
       </div>
       <div class="topbar-right">
         <button class="btn-topbar btn-fade"><span class="icon">↑</span> Upload</button>
-        <a href="{% url 'accounts:profile' %}" class="btn-topbar btn-outline"><span class="icon">💬</span> Past Conversations</a>
+        <a href="{% url 'accounts:profile' %}" class="btn-topbar btn-outline"><span class="icon">👤</span> My Profile</a>
         <form method="post" action="{% url 'accounts:logout' %}" style="display:inline; margin-left: 10px;">
           {% csrf_token %}
           <button type="submit" class="btn-topbar">Logout</button>

@@ -19,7 +19,7 @@
       {% elif active_loan_count %}
       You have {{ active_loan_count }} active loan{{ active_loan_count|pluralize }}.
       {% else %}
-      You have no active loans right now.
+      You have no borrowed books right now.
       {% endif %}
     </p>
   </div>
@@ -47,7 +47,7 @@
   {% if not user.is_librarian %}
   <a href="{% url 'circulation:my_loans' %}" class="dash-card dash-card--loans">
     <span class="dash-card-icon dash-card-icon--round" aria-hidden="true">📋</span>
-    <h2>My Loans</h2>
+    <h2>Borrowed Books</h2>
     <p class="dash-card-stat">{{ active_loan_count }} Active</p>
   </a>
 
@@ -70,7 +70,7 @@
     </ul>
     <a href="{% url 'circulation:my_loans' %}" class="dash-view-all">View All History</a>
     {% else %}
-    <p class="dash-empty">No recent loans. <a href="{% url 'catalog:book_list' %}">Browse catalogue</a></p>
+    <p class="dash-empty">No recent borrowed books. <a href="{% url 'catalog:book_list' %}">Browse catalogue</a></p>
     {% endif %}
   </section>
   {% endif %}

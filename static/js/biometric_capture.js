@@ -5,7 +5,7 @@
   const livenessInput = document.getElementById("nose_liveness_frames");
   const captureBtn = document.getElementById("capture-nose");
   const nextBtn = document.getElementById("liveness-next-btn");
-  const preview = document.getElementById("nose-preview");
+  const previewContainer = document.getElementById("nose-preview-container");
   const statusEl = document.getElementById("liveness-status");
   const progressEl = document.getElementById("liveness-progress");
   const hintEl = document.getElementById("liveness-hint");
@@ -170,7 +170,7 @@
 
   function resetProgress() {
     if (!progressEl) return;
-    progressEl.querySelectorAll(".liveness-step").forEach((el) => {
+    progressEl.querySelectorAll(".liveness-step, .nc-step").forEach((el) => {
       el.classList.remove("is-active", "is-done");
     });
   }
@@ -253,9 +253,16 @@
     if (livenessInput) {
       livenessInput.value = JSON.stringify(frames);
     }
-    if (preview) {
-      preview.src = frames[frames.length - 1];
-      preview.style.display = "block";
+    if (previewContainer) {
+      previewContainer.innerHTML = "";
+      frames.forEach((frameSrc, idx) => {
+        const img = document.createElement("img");
+        img.src = frameSrc;
+        img.alt = "Captured frame " + (idx + 1);
+        img.className = "nc-preview-img";
+        previewContainer.appendChild(img);
+      });
+      previewContainer.style.display = "flex";
     }
 
     completed = true;
@@ -336,6 +343,10 @@
     hideNextButton();
     noseInput.value = "";
     if (livenessInput) livenessInput.value = "";
+    if (previewContainer) {
+      previewContainer.innerHTML = "";
+      previewContainer.style.display = "none";
+    }
     resetProgress();
 
     try {

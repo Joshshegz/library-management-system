@@ -2,8 +2,7 @@ import json
 
 from .services.liveness import LivenessError, validate_nose_probes
 from .services.nose import NoseExtractionError, NoseProbe, extract_nose_probe
-from .services.preprocessing import decode_data_url, decode_image_from_upload
-from .services.thumb import ThumbExtractionError, extract_thumb_features
+from .services.preprocessing import decode_data_url
 
 
 def _decode_frames_from_request(request) -> list:
@@ -49,25 +48,3 @@ def extract_nose_from_request(request) -> list[float]:
     return nose
 
 
-def extract_from_request(request) -> tuple[list[float], list[float], list[float]]:
-    nose_image = request.POST.get("nose_image", "").strip()
-    thumb_image = request.POST.get("thumb_image", "").strip()
-
-    if not nose_image or not thumb_image:
-        raise ValueError("Both nose (camera) and thumb images are required.")
-
-    nose_bgr = decode_data_url(nose_image)
-    if request.FILES.get("thumb_file"):
-        thumb_bgr = decode_image_from_upload(request.FILES["thumb_file"].read())
-    elif thumb_image:
-        thumb_bgr = decode_data_url(thumb_image)
-    else:
-        raise ValueError("Thumb image is required.")
-
-    probe = extract_nose_probe(nose_bgr)
-    thumb_features = extract_thumb_features(thumb_bgr)
-    return probe.normalized, thumb_features, probe.face_normalized
-
-
-def extract_nose_features_legacy_single(nose_bgr):
-    return extract_nose_probe(nose_bgr).normalized

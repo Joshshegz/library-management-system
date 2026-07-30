@@ -3,6 +3,10 @@ from pathlib import Path
 import urllib.request
 
 import numpy as np
+import os
+
+# Suppress MediaPipe's noisy C++ clearcut telemetry warnings
+os.environ["GLOG_minloglevel"] = "2"
 
 # Face mesh nasal region indices (MediaPipe face landmarker)
 NOSE_LANDMARK_INDICES = [1, 4, 5, 6, 19, 94, 168, 197, 240, 460]

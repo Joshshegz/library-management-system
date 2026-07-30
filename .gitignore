@@ -7,3 +7,5 @@ db.sqlite3
 media/
 staticfiles/
 *.log
+# Large binary model files (e.g. MediaPipe face_landmarker.task)
+*.task

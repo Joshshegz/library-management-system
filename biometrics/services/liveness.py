@@ -47,31 +47,41 @@ def _pairwise_face_distance(probe_a: NoseProbe, probe_b: NoseProbe) -> float:
 
 def validate_nose_probes(probes: list[NoseProbe]) -> LivenessResult:
     min_frames = getattr(settings, "BIOMETRIC_LIVENESS_MIN_FRAMES", 3)
-    min_visibility = getattr(settings, "BIOMETRIC_LIVENESS_MIN_VISIBILITY", 0.40)
+    min_visibility = getattr(settings, "BIOMETRIC_LIVENESS_MIN_VISIBILITY", 0.55)
+    min_presence = getattr(settings, "BIOMETRIC_LIVENESS_MIN_PRESENCE", 0.55)
     min_movement = getattr(settings, "BIOMETRIC_LIVENESS_MIN_MOVEMENT", 0.8)
     max_movement = getattr(settings, "BIOMETRIC_LIVENESS_MAX_MOVEMENT", 120.0)
     max_nose_static = getattr(settings, "BIOMETRIC_LIVENESS_MAX_STATIC_SIMILARITY", 0.25)
     max_face_static = getattr(settings, "BIOMETRIC_LIVENESS_MAX_FACE_STATIC_SIMILARITY", 0.20)
     min_blink = getattr(settings, "BIOMETRIC_LIVENESS_MIN_BLINK_DELTA", 0.012)
     min_mouth = getattr(settings, "BIOMETRIC_LIVENESS_MIN_MOUTH_DELTA", 0.04)
-    min_z_spread = getattr(settings, "BIOMETRIC_LIVENESS_MIN_Z_SPREAD", 0.006)
+    min_z_spread = getattr(settings, "BIOMETRIC_LIVENESS_MIN_Z_SPREAD", 0.012)
 
     if len(probes) < min_frames:
         raise LivenessError(
             f"Liveness requires {min_frames} live captures. Complete all capture steps."
         )
 
-    mean_vis = float(np.mean([p.mean_visibility for p in probes]))
-    if mean_vis < min_visibility:
-        raise LivenessError(
-            "Nose area not clearly visible. Remove hands or masks covering your nose."
-        )
-
-    for probe in probes:
+    # ── Per-frame checks: every frame must have a clearly visible, present nose.
+    # Using mean across frames allowed a single covered frame to slip through.
+    for idx, probe in enumerate(probes, start=1):
+        if probe.mean_visibility < min_visibility:
+            raise LivenessError(
+                f"Step {idx}: nose not clearly visible. Remove anything covering your nose "
+                "(hand, mask, scarf) and try again."
+            )
+        if probe.mean_presence < min_presence:
+            raise LivenessError(
+                f"Step {idx}: nose not detected with sufficient confidence. "
+                "Face the camera directly with your nose uncovered."
+            )
         if probe.z_spread < min_z_spread:
             raise LivenessError(
-                "Could not read a clear nose shape. Face the camera with your nose uncovered."
+                f"Step {idx}: nose shape too flat — could not read real nasal depth. "
+                "Make sure your nose is not covered and face the camera straight on."
             )
+
+    mean_vis = float(np.mean([p.mean_visibility for p in probes]))
 
     movements = [_frame_movement(probes[i - 1], probes[i]) for i in range(1, len(probes))]
     movement_score = float(np.median(movements)) if movements else 0.0
